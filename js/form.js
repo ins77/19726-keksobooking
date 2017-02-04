@@ -1,7 +1,7 @@
 'use strict';
 
 var classes = {
-  INVISIBLE: 'invisible',
+  DIALOG_INVISIBLE: 'dialog--invisible',
   PIN_ACTIVE: 'pin--active',
 };
 
@@ -9,96 +9,183 @@ var errors = {
   GREATER_THAN: 'Value length must be greater than or equals to 30'
 };
 
-var pinMap = document.querySelector('.tokyo__pin-map');
-var selectedPin = pinMap.querySelector('.pin--active');
-var dialog = document.querySelector('.dialog');
-var dialogClose = dialog.querySelector('.dialog__close');
+var TITLE_MIN_VALUE = 30;
 
-var formNotice = document.querySelector('.notice__form');
+var pinMapElement = document.querySelector('.tokyo__pin-map');
+var selectedPinElement = pinMapElement.querySelector('.pin--active');
+var dialogElement = document.querySelector('.dialog');
+var dialogCloseElement = dialogElement.querySelector('.dialog__close');
+var formNoticeElement = document.querySelector('.notice__form');
+var inputTitleElement = formNoticeElement.querySelector('#title');
+var inputAddressElement = formNoticeElement.querySelector('#address');
+var inputPriceElement = formNoticeElement.querySelector('#price');
+var selectTimeInElement = formNoticeElement.querySelector('#time');
+var selectTimeOutElement = formNoticeElement.querySelector('#timeout');
+var selectTypeElement = formNoticeElement.querySelector('#type');
+var selectRoomsElement = formNoticeElement.querySelector('#room_number');
+var selectCapacityElement = formNoticeElement.querySelector('#capacity');
 
-var inputTitle = formNotice.querySelector('#title');
-var inputAddress = formNotice.querySelector('#address');
-var inputPrice = formNotice.querySelector('#price');
+var config = [
+  {
+    element: inputTitleElement,
+    attr: {
+      required: true,
+      maxLength: 100
+    }
+  },
+  {
+    element: inputAddressElement,
+    attr: {
+      required: true
+    }
+  },
+  {
+    element: inputPriceElement,
+    attr: {
+      required: true,
+      max: 1000000
+    }
+  },
+  {
+    element: selectTimeOutElement,
+    attr: {
+      value: selectTimeInElement.value
+    }
+  }
+];
 
-var selectTime = formNotice.querySelector('#time');
-var selectTimeout = formNotice.querySelector('#timeout');
-var selectType = formNotice.querySelector('#type');
+Element.prototype.closest = function (el) {
+  var node = this;
+
+  while (node) {
+    if (node.matches(el)) {
+      return node;
+    } else {
+      node = node.parentElement;
+    }
+  }
+
+  return null;
+};
+
+// устанавливаем начальные значения полей формы
+function setInitiaFormValues(formConfig) {
+  var formElement;
+  var formElementAttr;
+  for (var i = 0; i < formConfig.length; i++) {
+    formElement = formConfig[i].element;
+    formElementAttr = formConfig[i].attr;
+    for (var attr in formElementAttr) {
+      if (formElementAttr.hasOwnProperty(attr)) {
+        formElement[attr] = formElementAttr[attr];
+      }
+    }
+  }
+}
 
 // устанавливаем значение поля inputPrice, в зависимости от значения поля selectType
 function setInputPriceMin() {
-  switch (selectType.value) {
+  switch (selectTypeElement.value) {
     case ('flat'):
-      inputPrice.min = 1000;
+      inputPriceElement.min = 1000;
       break;
     case ('shack'):
-      inputPrice.min = 0;
+      inputPriceElement.min = 0;
       break;
     case ('palace'):
-      inputPrice.min = 10000;
+      inputPriceElement.min = 10000;
       break;
   }
 }
 
-function setInitialState() {
-  dialog.classList.add(classes.INVISIBLE);
-  inputTitle.required = true;
-  inputTitle.maxLength = 100;
-  inputAddress.required = true;
-  inputPrice.required = true;
-  inputPrice.max = 1000000;
-  selectTimeout.value = selectTime.value;
+function setSelectCapacityValue() {
+  if (selectRoomsElement.value === '1') {
+    selectCapacityElement.value = '0';
+  } else {
+    selectCapacityElement.value = '3';
+  }
+}
 
-  setInputPriceMin();
+function setSelectRoomsValue() {
+  if (selectCapacityElement.value === '0') {
+    selectRoomsElement.value = '1';
+  } else {
+    selectRoomsElement.value = '2';
+  }
 }
 
 // выставляем активный пин, убираем активность с других пинов
 function setActivePin(node) {
-  if (selectedPin) {
-    selectedPin.classList.remove(classes.PIN_ACTIVE);
+  if (selectedPinElement === node) {
+    return;
+  } else {
+    if (selectedPinElement) {
+      selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+    }
+    selectedPinElement = node;
+    selectedPinElement.classList.add(classes.PIN_ACTIVE);
   }
-  selectedPin = node;
-  selectedPin.classList.add(classes.PIN_ACTIVE);
 }
 
-function handlerPinMap(e) {
+function changePinMapHandler(e) {
   var target = e.target;
-  var closestPin = target.closest('.pin');
+  var closestPinElement = target.closest('.pin');
 
-  if (!closestPin) {
+  if (!closestPinElement) {
     return;
   }
 
-  dialog.classList.remove(classes.INVISIBLE);
+  if (!closestPinElement.classList.contains(classes.PIN_ACTIVE)) {
+    setActivePin(closestPinElement);
+  }
 
-  setActivePin(closestPin);
+  dialogElement.classList.remove(classes.PIN_INVISIBLE);
 }
 
-function handlerdialogClose(e) {
+function closeDialogHandler(e) {
   e.preventDefault();
-  dialog.classList.add(classes.INVISIBLE);
-  selectedPin.classList.remove(classes.PIN_ACTIVE);
+  dialogElement.classList.add(classes.PIN_INVISIBLE);
+  selectedPinElement.classList.remove(classes.PIN_ACTIVE);
 }
 
-function handlerInputTitle() {
-  inputTitle.setCustomValidity('');
+function setInputTitleErrorHandler() {
+  inputTitleElement.setCustomValidity('');
 
-  if (inputTitle.value.length < 30 && inputTitle.validity.valid) {
-    inputTitle.setCustomValidity(errors.GREATER_THAN);
+  if (inputTitleElement.value.length < TITLE_MIN_VALUE && inputTitleElement.validity.valid) {
+    inputTitleElement.setCustomValidity(errors.GREATER_THAN);
   }
 }
 
-function handlerSelectTime() {
-  selectTimeout.value = selectTime.value;
+function changeTimeOutHandler() {
+  selectTimeInElement.value = selectTimeOutElement.value;
 }
 
-function handlerSelectType() {
+function changeTimeInHandler() {
+  selectTimeOutElement.value = selectTimeInElement.value;
+}
+
+function changeSelectRoomsHandler() {
+  setSelectCapacityValue();
+}
+
+function changeSelectCapacityHandler() {
+  setSelectRoomsValue();
+}
+
+function changeSelectTypeHandler() {
   setInputPriceMin();
 }
 
-setInitialState();
+setInitiaFormValues(config);
+setSelectCapacityValue();
+setSelectRoomsValue();
+setInputPriceMin();
 
-pinMap.addEventListener('click', handlerPinMap);
-dialogClose.addEventListener('click', handlerdialogClose);
-inputTitle.addEventListener('input', handlerInputTitle);
-selectTime.addEventListener('input', handlerSelectTime);
-selectType.addEventListener('input', handlerSelectType);
+pinMapElement.addEventListener('click', changePinMapHandler);
+dialogCloseElement.addEventListener('click', closeDialogHandler);
+inputTitleElement.addEventListener('input', setInputTitleErrorHandler);
+selectTimeInElement.addEventListener('input', changeTimeInHandler);
+selectTimeOutElement.addEventListener('input', changeTimeOutHandler);
+selectTypeElement.addEventListener('input', changeSelectTypeHandler);
+selectRoomsElement.addEventListener('input', changeSelectRoomsHandler);
+selectCapacityElement.addEventListener('input', changeSelectCapacityHandler);
