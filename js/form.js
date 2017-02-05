@@ -9,10 +9,27 @@ var errors = {
   GREATER_THAN: 'Value length must be greater than or equals to 30'
 };
 
+var numberOfRooms = {
+  ONE: '1',
+  TWO: '2',
+  ONE_HUNDRED: '100'
+};
+
+var numberOfGuests = {
+  NONE: '0',
+  THREE: '3'
+};
+
+var typeToMinPriceMap = {
+  'flat': 1000,
+  'shack': 0,
+  'palace': 10000
+};
+
 var TITLE_MIN_VALUE = 30;
 
 var pinMapElement = document.querySelector('.tokyo__pin-map');
-var selectedPinElement = pinMapElement.querySelector('.pin--active');
+var selectedPinElement = document.createElement('div');
 var dialogElement = document.querySelector('.dialog');
 var dialogCloseElement = dialogElement.querySelector('.dialog__close');
 var formNoticeElement = document.querySelector('.notice__form');
@@ -83,34 +100,24 @@ function setInitiaFormValues(formConfig) {
   }
 }
 
-// устанавливаем значение поля inputPrice, в зависимости от значения поля selectType
 function setInputPriceMin() {
-  switch (selectTypeElement.value) {
-    case ('flat'):
-      inputPriceElement.min = 1000;
-      break;
-    case ('shack'):
-      inputPriceElement.min = 0;
-      break;
-    case ('palace'):
-      inputPriceElement.min = 10000;
-      break;
-  }
+  var minPrice = typeToMinPriceMap[selectTypeElement.value];
+  inputPriceElement.min = minPrice;
 }
 
 function setSelectCapacityValue() {
-  if (selectRoomsElement.value === '1') {
-    selectCapacityElement.value = '0';
+  if (selectRoomsElement.value === numberOfRooms.ONE) {
+    selectCapacityElement.value = numberOfGuests.NONE;
   } else {
-    selectCapacityElement.value = '3';
+    selectCapacityElement.value = numberOfGuests.THREE;
   }
 }
 
 function setSelectRoomsValue() {
-  if (selectCapacityElement.value === '0') {
-    selectRoomsElement.value = '1';
+  if (selectCapacityElement.value === numberOfGuests.NONE) {
+    selectRoomsElement.value = numberOfRooms.ONE;
   } else {
-    selectRoomsElement.value = '2';
+    selectRoomsElement.value = numberOfRooms.TWO;
   }
 }
 
@@ -118,13 +125,11 @@ function setSelectRoomsValue() {
 function setActivePin(node) {
   if (selectedPinElement === node) {
     return;
-  } else {
-    if (selectedPinElement) {
-      selectedPinElement.classList.remove(classes.PIN_ACTIVE);
-    }
-    selectedPinElement = node;
-    selectedPinElement.classList.add(classes.PIN_ACTIVE);
   }
+
+  selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+  selectedPinElement = node;
+  selectedPinElement.classList.add(classes.PIN_ACTIVE);
 }
 
 function changePinMapHandler(e) {
@@ -139,12 +144,12 @@ function changePinMapHandler(e) {
     setActivePin(closestPinElement);
   }
 
-  dialogElement.classList.remove(classes.PIN_INVISIBLE);
+  dialogElement.classList.remove(classes.DIALOG_INVISIBLE);
 }
 
 function closeDialogHandler(e) {
   e.preventDefault();
-  dialogElement.classList.add(classes.PIN_INVISIBLE);
+  dialogElement.classList.add(classes.DIALOG_INVISIBLE);
   selectedPinElement.classList.remove(classes.PIN_ACTIVE);
 }
 
