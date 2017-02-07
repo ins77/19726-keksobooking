@@ -1,7 +1,13 @@
 'use strict';
 
+var keyNames = {
+  ENTER: 13,
+  ESC: 27
+}
+
 var classes = {
   DIALOG_INVISIBLE: 'dialog--invisible',
+  PIN: '.pin',
   PIN_ACTIVE: 'pin--active',
 };
 
@@ -29,9 +35,11 @@ var typeToMinPriceMap = {
 var TITLE_MIN_VALUE = 30;
 
 var pinMapElement = document.querySelector('.tokyo__pin-map');
-var selectedPinElement = document.createElement('div');
+var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
+var selectedPinElement = pinMapElement.querySelector('.pin--active');
 var dialogElement = document.querySelector('.dialog');
 var dialogCloseElement = dialogElement.querySelector('.dialog__close');
+var dialogCloseBtnElement = dialogCloseElement.querySelector('[role="button"]');
 var formNoticeElement = document.querySelector('.notice__form');
 var inputTitleElement = formNoticeElement.querySelector('#title');
 var inputAddressElement = formNoticeElement.querySelector('#address');
@@ -121,36 +129,74 @@ function setSelectRoomsValue() {
   }
 }
 
+function setDialogVisibility() {
+  for (var i = 0; i < pinBtnElements.length; i++) {
+    var pinElement = pinBtnElements[i].closest(classes.PIN);
+    if (pinElement.classList.contains(classes.PIN_ACTIVE)) {
+      dialogElement.classList.remove(classes.DIALOG_INVISIBLE);
+      return;
+    }
+  }
+
+  dialogElement.classList.add(classes.DIALOG_INVISIBLE);
+}
+
+function setPinAriaPressed() {
+  pinBtnElements.forEach(function(el) {
+    var isPinActive = el.closest(classes.PIN).classList.contains(classes.PIN_ACTIVE);
+    el.setAttribute('aria-pressed', isPinActive);
+  });
+}
+
+function setDialogCloseAriaHidden() {
+  var isDialogVisible = dialogElement.classList.contains(classes.DIALOG_INVISIBLE);
+  dialogCloseBtnElement.setAttribute('aria-hidden', isDialogVisible);
+}
+
 // выставляем активный пин, убираем активность с других пинов
 function setActivePin(node) {
   if (selectedPinElement === node) {
     return;
   }
 
-  selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+  if (selectedPinElement) {
+    selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+  }
+
   selectedPinElement = node;
   selectedPinElement.classList.add(classes.PIN_ACTIVE);
+  setPinAriaPressed();
+}
+
+function resetPinActivity() {
+  selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+  dialogElement.classList.add(classes.DIALOG_INVISIBLE);
+  dialogCloseBtnElement.setAttribute('aria-hidden', true);
+}
+
+function isActivateEvent(e) {
+  return e.keyCode === keyNames.ENTER || e.type === 'click';
 }
 
 function changePinMapHandler(e) {
+  if (!isActivateEvent(e)) {
+    return;
+  }
   var target = e.target;
-  var closestPinElement = target.closest('.pin');
+  var closestPinElement = target.closest(classes.PIN);
 
   if (!closestPinElement) {
     return;
   }
 
-  if (!closestPinElement.classList.contains(classes.PIN_ACTIVE)) {
-    setActivePin(closestPinElement);
-  }
-
+  setActivePin(closestPinElement);
   dialogElement.classList.remove(classes.DIALOG_INVISIBLE);
+  dialogCloseBtnElement.setAttribute('aria-hidden', false);
 }
 
 function closeDialogHandler(e) {
   e.preventDefault();
-  dialogElement.classList.add(classes.DIALOG_INVISIBLE);
-  selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+  resetPinActivity();
 }
 
 function setInputTitleErrorHandler() {
@@ -181,12 +227,30 @@ function changeSelectTypeHandler() {
   setInputPriceMin();
 }
 
+function resetPinActivityHandler(e) {
+  if (!selectedPinElement) {
+    return;
+  }
+
+  if (e.keyCode === keyNames.ESC) {
+    resetPinActivity();
+  }
+
+  // сбрасываем selectedPinElement для того, чтобы после нажатия esc не срабатывало условие (selectedPinElement === node) в setActivePin()
+  selectedPinElement = pinMapElement.querySelector('.pin--active');
+}
+
 setInitiaFormValues(config);
 setSelectCapacityValue();
 setSelectRoomsValue();
 setInputPriceMin();
+setDialogVisibility();
+setPinAriaPressed();
+setDialogCloseAriaHidden();
 
+document.addEventListener('keydown', resetPinActivityHandler);
 pinMapElement.addEventListener('click', changePinMapHandler);
+pinMapElement.addEventListener('keydown', changePinMapHandler);
 dialogCloseElement.addEventListener('click', closeDialogHandler);
 inputTitleElement.addEventListener('input', setInputTitleErrorHandler);
 selectTimeInElement.addEventListener('input', changeTimeInHandler);
