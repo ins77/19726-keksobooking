@@ -3,7 +3,7 @@
 var keyNames = {
   ENTER: 13,
   ESC: 27
-}
+};
 
 var classes = {
   DIALOG_INVISIBLE: 'dialog--invisible',
@@ -142,7 +142,7 @@ function setDialogVisibility() {
 }
 
 function setPinAriaPressed() {
-  pinBtnElements.forEach(function(el) {
+  pinBtnElements.forEach(function (el) {
     var isPinActive = el.closest(classes.PIN).classList.contains(classes.PIN_ACTIVE);
     el.setAttribute('aria-pressed', isPinActive);
   });
