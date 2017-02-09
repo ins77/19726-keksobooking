@@ -67,17 +67,17 @@
       </form>
     </div>
     <div class="tokyo__pin-map">
-      <div class="pin  pin__main"><img src="img/main-pin-image.png" alt="Main Pin" class="rounded" width="40" height="44" role="button" tabindex="4"></div>
-      <div class="pin" style="left: 700px;top: 350px"><img src="img/avatars/avatar.png" alt="User Avatar" class="rounded" width="40" height="40" role="button" tabindex="5"></div>
-      <div class="pin" style="left: 400px;top: 400px"><img src="img/avatars/simpson.png" alt="User Avatar" class="rounded" width="40" height="40" role="button" tabindex="2"></div>
-      <div class="pin"><img src="img/avatars/default.png" alt="User Avatar" class="rounded" width="40" height="40" role="button" tabindex="3"></div>
+      <div class="pin  pin__main"><img src="img/main-pin-image.png" alt="Main Pin" class="rounded" width="40" height="44" role="button" tabindex="1"></div>
+      <div class="pin" style="left: 700px;top: 350px"><img src="img/avatars/avatar.png" alt="User Avatar" class="rounded" width="40" height="40" role="button" tabindex="1"></div>
+      <div class="pin" style="left: 400px;top: 400px"><img src="img/avatars/simpson.png" alt="User Avatar" class="rounded" width="40" height="40" role="button" tabindex="1"></div>
+      <div class="pin"><img src="img/avatars/default.png" alt="User Avatar" class="rounded" width="40" height="40" role="button" tabindex="1"></div>
     </div>
-    <div class="dialog" role="dialog">
+    <div class="dialog" role="dialog" aria-labelledby="dialogTitle">
       <div class="dialog__title"><img src="img/avatars/avatar.png" alt="Avatar" width="70" height="70">
-        <a href="#" class="dialog__close"><img src="img/close.svg" alt="close" width="22" height="22" role="button"></a>
+        <a href="#" class="dialog__close" tabindex="1"><img src="img/close.svg" alt="close" width="22" height="22" role="button" aria-label="close dialog"></a>
       </div>
       <div class="dialog__panel">
-        <h3 class="lodge__title">Уютное гнездышко для молодоженов</h3>
+        <h3 class="lodge__title" id="dialogTitle">Уютное гнездышко для молодоженов</h3>
         <p class="lodge__address">102-0082 Tōkyō-to, Chiyoda-ku, Ichibanchō, 14−3</p>
         <h3 class="lodge__price">5200&#x20bd;/ночь</h3>
         <h4 class="lodge__type">Квартира</h4>
@@ -246,7 +246,7 @@
 <footer class="footer container">
   <div class="center-wrapper">
     <section class="footer-logo">
-      Сделано в <a tabindex="1" href="https://htmlacademy.ru" class="footer-logo-link"><img src="img/ha-logo.png" class="footer-logo-image" width="130" alt="HTML Academy"/>HTML Academy</a> &copy; 2017
+      Сделано в <a href="https://htmlacademy.ru" class="footer-logo-link"><img src="img/ha-logo.png" class="footer-logo-image" width="130" alt="HTML Academy"/>HTML Academy</a> &copy; 2017
     </section>
     <nav class="footer-social">
       <a href="https://twitter.com/htmlacademy_ru" class="footer-social-item footer-social-item-twitter" target="_blank" rel="nofollow">Twitter</a>

@@ -1,13 +1,13 @@
 'use strict';
 
-var keyNames = {
+var keyCodes = {
   ENTER: 13,
   ESC: 27
 };
 
 var classes = {
   DIALOG_INVISIBLE: 'dialog--invisible',
-  PIN: '.pin',
+  PIN: 'pin',
   PIN_ACTIVE: 'pin--active',
 };
 
@@ -94,7 +94,7 @@ Element.prototype.closest = function (el) {
 };
 
 // устанавливаем начальные значения полей формы
-function setInitiaFormValues(formConfig) {
+function initFormValues(formConfig) {
   var formElement;
   var formElementAttr;
   for (var i = 0; i < formConfig.length; i++) {
@@ -106,6 +106,29 @@ function setInitiaFormValues(formConfig) {
       }
     }
   }
+}
+
+function initDialogVisibility() {
+  if (selectedPinElement) {
+    dialogElement.classList.remove(classes.DIALOG_INVISIBLE);
+    dialogElement.setAttribute('aria-hidden', false);
+  } else {
+    dialogElement.classList.add(classes.DIALOG_INVISIBLE);
+    dialogElement.setAttribute('aria-hidden', true);
+  }
+}
+
+function initPinAriaPressedAttr() {
+  pinBtnElements.forEach(function (el) {
+    var isPinActive = el.closest('.' + classes.PIN).classList.contains(classes.PIN_ACTIVE);
+    el.setAttribute('aria-pressed', isPinActive);
+  });
+}
+
+function initDialogCloseAriaHiddenAttr() {
+  var isDialogVisible = dialogElement.classList.contains(classes.DIALOG_INVISIBLE);
+  dialogCloseBtnElement.setAttribute('aria-hidden', isDialogVisible);
+  dialogElement.setAttribute('aria-hidden', isDialogVisible);
 }
 
 function setInputPriceMin() {
@@ -129,30 +152,6 @@ function setSelectRoomsValue() {
   }
 }
 
-function setDialogVisibility() {
-  for (var i = 0; i < pinBtnElements.length; i++) {
-    var pinElement = pinBtnElements[i].closest(classes.PIN);
-    if (pinElement.classList.contains(classes.PIN_ACTIVE)) {
-      dialogElement.classList.remove(classes.DIALOG_INVISIBLE);
-      return;
-    }
-  }
-
-  dialogElement.classList.add(classes.DIALOG_INVISIBLE);
-}
-
-function setPinAriaPressed() {
-  pinBtnElements.forEach(function (el) {
-    var isPinActive = el.closest(classes.PIN).classList.contains(classes.PIN_ACTIVE);
-    el.setAttribute('aria-pressed', isPinActive);
-  });
-}
-
-function setDialogCloseAriaHidden() {
-  var isDialogVisible = dialogElement.classList.contains(classes.DIALOG_INVISIBLE);
-  dialogCloseBtnElement.setAttribute('aria-hidden', isDialogVisible);
-}
-
 // выставляем активный пин, убираем активность с других пинов
 function setActivePin(node) {
   if (selectedPinElement === node) {
@@ -161,45 +160,52 @@ function setActivePin(node) {
 
   if (selectedPinElement) {
     selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+    selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
   }
 
   selectedPinElement = node;
   selectedPinElement.classList.add(classes.PIN_ACTIVE);
-  setPinAriaPressed();
+  selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', true);
 }
 
 function resetPinActivity() {
   selectedPinElement.classList.remove(classes.PIN_ACTIVE);
   dialogElement.classList.add(classes.DIALOG_INVISIBLE);
+  selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
   dialogCloseBtnElement.setAttribute('aria-hidden', true);
+  dialogElement.setAttribute('aria-hidden', true);
 }
 
-function isActivateEvent(e) {
-  return e.keyCode === keyNames.ENTER || e.type === 'click';
+function isActivateEvent(event) {
+  return event.keyCode === keyCodes.ENTER || event.type === 'click';
 }
 
-function changePinMapHandler(e) {
-  if (!isActivateEvent(e)) {
+function pinMapElementClickAndKeydownHandler(event) {
+  if (!isActivateEvent(event)) {
     return;
   }
-  var target = e.target;
-  var closestPinElement = target.closest(classes.PIN);
+  var target = event.target;
+  var closestPinElement = target.closest('.' + classes.PIN);
 
   if (!closestPinElement) {
     return;
   }
 
+  if (dialogElement.classList.contains(classes.DIALOG_INVISIBLE)) {
+    dialogElement.classList.remove(classes.DIALOG_INVISIBLE);
+    dialogCloseBtnElement.setAttribute('aria-hidden', false);
+    dialogElement.setAttribute('aria-hidden', false);
+  }
+
   setActivePin(closestPinElement);
-  dialogElement.classList.remove(classes.DIALOG_INVISIBLE);
-  dialogCloseBtnElement.setAttribute('aria-hidden', false);
 }
 
-function closeDialogHandler(e) {
-  e.preventDefault();
+function dialogCloseElementClickHandler(event) {
+  event.preventDefault();
   resetPinActivity();
 }
 
-function setInputTitleErrorHandler() {
+function inputTitleElementInputHandler() {
   inputTitleElement.setCustomValidity('');
 
   if (inputTitleElement.value.length < TITLE_MIN_VALUE && inputTitleElement.validity.valid) {
@@ -207,54 +213,55 @@ function setInputTitleErrorHandler() {
   }
 }
 
-function changeTimeOutHandler() {
+function selectTimeOutElementInputHandler() {
   selectTimeInElement.value = selectTimeOutElement.value;
 }
 
-function changeTimeInHandler() {
+function selectTimeInElementInputHandler() {
   selectTimeOutElement.value = selectTimeInElement.value;
 }
 
-function changeSelectRoomsHandler() {
+function selectRoomsElementInputHandler() {
   setSelectCapacityValue();
 }
 
-function changeSelectCapacityHandler() {
+function selectCapacityElementInputHandler() {
   setSelectRoomsValue();
 }
 
-function changeSelectTypeHandler() {
+function selectTypeElementInputHandler() {
   setInputPriceMin();
 }
 
-function resetPinActivityHandler(e) {
+function documentKeydownHandler(event) {
   if (!selectedPinElement) {
     return;
   }
 
-  if (e.keyCode === keyNames.ESC) {
-    resetPinActivity();
+  if (!dialogElement.classList.contains(classes.DIALOG_INVISIBLE)) {
+    if (event.keyCode === keyCodes.ESC) {
+      resetPinActivity();
+      // сбрасываем selectedPinElement для того, чтобы после нажатия esc не срабатывало условие (selectedPinElement === node) в setActivePin()
+      selectedPinElement = pinMapElement.querySelector('.' + classes.PIN_ACTIVE);
+    }
   }
-
-  // сбрасываем selectedPinElement для того, чтобы после нажатия esc не срабатывало условие (selectedPinElement === node) в setActivePin()
-  selectedPinElement = pinMapElement.querySelector('.pin--active');
 }
 
-setInitiaFormValues(config);
+initFormValues(config);
+initDialogVisibility();
+initPinAriaPressedAttr();
+initDialogCloseAriaHiddenAttr();
 setSelectCapacityValue();
 setSelectRoomsValue();
 setInputPriceMin();
-setDialogVisibility();
-setPinAriaPressed();
-setDialogCloseAriaHidden();
 
-document.addEventListener('keydown', resetPinActivityHandler);
-pinMapElement.addEventListener('click', changePinMapHandler);
-pinMapElement.addEventListener('keydown', changePinMapHandler);
-dialogCloseElement.addEventListener('click', closeDialogHandler);
-inputTitleElement.addEventListener('input', setInputTitleErrorHandler);
-selectTimeInElement.addEventListener('input', changeTimeInHandler);
-selectTimeOutElement.addEventListener('input', changeTimeOutHandler);
-selectTypeElement.addEventListener('input', changeSelectTypeHandler);
-selectRoomsElement.addEventListener('input', changeSelectRoomsHandler);
-selectCapacityElement.addEventListener('input', changeSelectCapacityHandler);
+document.addEventListener('keydown', documentKeydownHandler);
+pinMapElement.addEventListener('click', pinMapElementClickAndKeydownHandler);
+pinMapElement.addEventListener('keydown', pinMapElementClickAndKeydownHandler);
+dialogCloseElement.addEventListener('click', dialogCloseElementClickHandler);
+inputTitleElement.addEventListener('input', inputTitleElementInputHandler);
+selectTimeInElement.addEventListener('input', selectTimeInElementInputHandler);
+selectTimeOutElement.addEventListener('input', selectTimeOutElementInputHandler);
+selectTypeElement.addEventListener('input', selectTypeElementInputHandler);
+selectRoomsElement.addEventListener('input', selectRoomsElementInputHandler);
+selectCapacityElement.addEventListener('input', selectCapacityElementInputHandler);
