@@ -39,7 +39,6 @@ var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
 var selectedPinElement = pinMapElement.querySelector('.pin--active');
 var dialogElement = document.querySelector('.dialog');
 var dialogCloseElement = dialogElement.querySelector('.dialog__close');
-var dialogCloseBtnElement = dialogCloseElement.querySelector('[role="button"]');
 var formNoticeElement = document.querySelector('.notice__form');
 var inputTitleElement = formNoticeElement.querySelector('#title');
 var inputAddressElement = formNoticeElement.querySelector('#address');
@@ -93,7 +92,11 @@ Element.prototype.closest = function (el) {
   return null;
 };
 
-// устанавливаем начальные значения полей формы
+/**
+ * Устанавливает начальные значения полей формы
+ *
+ * @param {Array} formConfig
+ */
 function initFormValues(formConfig) {
   var formElement;
   var formElementAttr;
@@ -108,34 +111,26 @@ function initFormValues(formConfig) {
   }
 }
 
-function initDialogVisibility() {
-  if (selectedPinElement) {
-    dialogElement.classList.remove(classes.DIALOG_INVISIBLE);
-    dialogElement.setAttribute('aria-hidden', false);
-  } else {
-    dialogElement.classList.add(classes.DIALOG_INVISIBLE);
-    dialogElement.setAttribute('aria-hidden', true);
-  }
-}
-
+/**
+ * Устанавливает атрибуты aria-pressed
+ */
 function initPinAriaPressedAttr() {
-  pinBtnElements.forEach(function (el) {
-    var isPinActive = el.closest('.' + classes.PIN).classList.contains(classes.PIN_ACTIVE);
-    el.setAttribute('aria-pressed', isPinActive);
+  Array.prototype.forEach.call(pinBtnElements, function (el) {
+    el.setAttribute('aria-pressed', false);
   });
 }
 
-function initDialogCloseAriaHiddenAttr() {
-  var isDialogVisible = dialogElement.classList.contains(classes.DIALOG_INVISIBLE);
-  dialogCloseBtnElement.setAttribute('aria-hidden', isDialogVisible);
-  dialogElement.setAttribute('aria-hidden', isDialogVisible);
-}
-
+/**
+ * Устанавливает значение поля Цена за ночь
+ */
 function setInputPriceMin() {
   var minPrice = typeToMinPriceMap[selectTypeElement.value];
   inputPriceElement.min = minPrice;
 }
 
+/**
+ * Устанавливает значение поля Количество мест
+ */
 function setSelectCapacityValue() {
   if (selectRoomsElement.value === numberOfRooms.ONE) {
     selectCapacityElement.value = numberOfGuests.NONE;
@@ -144,6 +139,9 @@ function setSelectCapacityValue() {
   }
 }
 
+/**
+ * Устанавливает значение поля Количество комнат
+ */
 function setSelectRoomsValue() {
   if (selectCapacityElement.value === numberOfGuests.NONE) {
     selectRoomsElement.value = numberOfRooms.ONE;
@@ -152,7 +150,11 @@ function setSelectRoomsValue() {
   }
 }
 
-// выставляем активный пин, убираем активность с других пинов
+/**
+ * Устанавливает активный пин, убирает активность с других пинов
+ *
+ * @param {Object} node
+ */
 function setActivePin(node) {
   if (selectedPinElement === node) {
     return;
@@ -168,19 +170,50 @@ function setActivePin(node) {
   selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', true);
 }
 
-function resetPinActivity() {
-  selectedPinElement.classList.remove(classes.PIN_ACTIVE);
-  dialogElement.classList.add(classes.DIALOG_INVISIBLE);
-  selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
-  dialogCloseBtnElement.setAttribute('aria-hidden', true);
-  dialogElement.setAttribute('aria-hidden', true);
+/**
+ * Устанавливает/убирает видимость диалога, устанавливает/удаляет обработчики событий
+ *
+ * @param {Boolean} flag
+ */
+function setDialogVisibility(flag) {
+  dialogElement.classList.toggle(classes.DIALOG_INVISIBLE, flag);
+  dialogElement.setAttribute('aria-hidden', flag);
+
+  if (flag) {
+    document.removeEventListener('keydown', dialogKeydownHandler);
+    dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
+  } else {
+    document.addEventListener('keydown', dialogKeydownHandler);
+    dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
+  }
 }
 
+/**
+ * Сбрасывает все активные пины, скрывает диалог
+ */
+function resetPinActivity() {
+  selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+  selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
+
+  setDialogVisibility(true);
+}
+
+/**
+ * Проверяет нужная ли клавиша нажата
+ *
+ * @param {Object} event
+ * @return {Boolean}
+ */
 function isActivateEvent(event) {
   return event.keyCode === keyCodes.ENTER || event.type === 'click';
 }
 
-function pinMapElementClickAndKeydownHandler(event) {
+/**
+ * Обработчик событий для pinMap
+ *
+ * @param {Object} event
+ */
+function pinMapHandler(event) {
   if (!isActivateEvent(event)) {
     return;
   }
@@ -192,20 +225,26 @@ function pinMapElementClickAndKeydownHandler(event) {
   }
 
   if (dialogElement.classList.contains(classes.DIALOG_INVISIBLE)) {
-    dialogElement.classList.remove(classes.DIALOG_INVISIBLE);
-    dialogCloseBtnElement.setAttribute('aria-hidden', false);
-    dialogElement.setAttribute('aria-hidden', false);
+    setDialogVisibility(false);
   }
 
   setActivePin(closestPinElement);
 }
 
-function dialogCloseElementClickHandler(event) {
+/**
+ * Обработчик клика для dialogCloseElement
+ *
+ * @param {Object} event
+ */
+function dialogCloseClickHandler(event) {
   event.preventDefault();
   resetPinActivity();
 }
 
-function inputTitleElementInputHandler() {
+/**
+ * Обработчик ввода для inputTitleElement
+ */
+function inputTitleInputHandler() {
   inputTitleElement.setCustomValidity('');
 
   if (inputTitleElement.value.length < TITLE_MIN_VALUE && inputTitleElement.validity.valid) {
@@ -213,55 +252,65 @@ function inputTitleElementInputHandler() {
   }
 }
 
-function selectTimeOutElementInputHandler() {
+/**
+ * Обработчик ввода для selectTimeOutElement
+ */
+function selectTimeOutInputHandler() {
   selectTimeInElement.value = selectTimeOutElement.value;
 }
 
-function selectTimeInElementInputHandler() {
+/**
+ * Обработчик ввода для selectTimeInElement
+ */
+function selectTimeInInputHandler() {
   selectTimeOutElement.value = selectTimeInElement.value;
 }
 
-function selectRoomsElementInputHandler() {
+/**
+ * Обработчик ввода для selectRoomsElement
+ */
+function selectRoomsInputHandler() {
   setSelectCapacityValue();
 }
 
-function selectCapacityElementInputHandler() {
+/**
+ * Обработчик ввода для selectCapacityElement
+ */
+function selectCapacityInputHandler() {
   setSelectRoomsValue();
 }
 
-function selectTypeElementInputHandler() {
+/**
+ * Обработчик ввода для selectTypeElement
+ */
+function selectTypeInputHandler() {
   setInputPriceMin();
 }
 
-function documentKeydownHandler(event) {
-  if (!selectedPinElement) {
-    return;
-  }
-
-  if (!dialogElement.classList.contains(classes.DIALOG_INVISIBLE)) {
-    if (event.keyCode === keyCodes.ESC) {
-      resetPinActivity();
-      // сбрасываем selectedPinElement для того, чтобы после нажатия esc не срабатывало условие (selectedPinElement === node) в setActivePin()
-      selectedPinElement = pinMapElement.querySelector('.' + classes.PIN_ACTIVE);
-    }
+/**
+ * Обработчик нажатия клавиши для document
+ *
+ * @param {Object} event
+ */
+function dialogKeydownHandler(event) {
+  if (event.keyCode === keyCodes.ESC) {
+    resetPinActivity();
+    // сбрасываем selectedPinElement для того, чтобы после нажатия esc не срабатывало условие (selectedPinElement === node) в setActivePin()
+    selectedPinElement = pinMapElement.querySelector('.' + classes.PIN_ACTIVE);
   }
 }
 
 initFormValues(config);
-initDialogVisibility();
 initPinAriaPressedAttr();
-initDialogCloseAriaHiddenAttr();
 setSelectCapacityValue();
 setSelectRoomsValue();
 setInputPriceMin();
 
-document.addEventListener('keydown', documentKeydownHandler);
-pinMapElement.addEventListener('click', pinMapElementClickAndKeydownHandler);
-pinMapElement.addEventListener('keydown', pinMapElementClickAndKeydownHandler);
-dialogCloseElement.addEventListener('click', dialogCloseElementClickHandler);
-inputTitleElement.addEventListener('input', inputTitleElementInputHandler);
-selectTimeInElement.addEventListener('input', selectTimeInElementInputHandler);
-selectTimeOutElement.addEventListener('input', selectTimeOutElementInputHandler);
-selectTypeElement.addEventListener('input', selectTypeElementInputHandler);
-selectRoomsElement.addEventListener('input', selectRoomsElementInputHandler);
-selectCapacityElement.addEventListener('input', selectCapacityElementInputHandler);
+pinMapElement.addEventListener('click', pinMapHandler);
+pinMapElement.addEventListener('keydown', pinMapHandler);
+inputTitleElement.addEventListener('input', inputTitleInputHandler);
+selectTimeInElement.addEventListener('input', selectTimeInInputHandler);
+selectTimeOutElement.addEventListener('input', selectTimeOutInputHandler);
+selectTypeElement.addEventListener('input', selectTypeInputHandler);
+selectRoomsElement.addEventListener('input', selectRoomsInputHandler);
+selectCapacityElement.addEventListener('input', selectCapacityInputHandler);
