@@ -153,7 +153,7 @@ function setSelectRoomsValue() {
 /**
  * Устанавливает активный пин, убирает активность с других пинов
  *
- * @param {Object} node
+ * @param {Element} node
  */
 function setActivePin(node) {
   if (selectedPinElement === node) {
@@ -190,14 +190,15 @@ function setDialogVisibility(flag) {
 }
 
 /**
- * Сбрасывает все активные пины, скрывает диалог
+ * Сбрасывает активный пин, скрывает диалог
  */
-function resetPinActivity() {
+function removeSelectedPin() {
   var pinBtn = selectedPinElement.querySelector('[role="button"]');
 
   selectedPinElement.classList.remove(classes.PIN_ACTIVE);
   pinBtn.focus();
   pinBtn.setAttribute('aria-pressed', false);
+  selectedPinElement = null;
 
   setDialogVisibility(true);
 }
@@ -205,7 +206,7 @@ function resetPinActivity() {
 /**
  * Проверяет нужная ли клавиша нажата
  *
- * @param {Object} event
+ * @param {KeyboardEvent} event
  * @return {Boolean}
  */
 function isActivateEvent(event) {
@@ -215,7 +216,7 @@ function isActivateEvent(event) {
 /**
  * Обработчик событий для pinMap
  *
- * @param {Object} event
+ * @param {KeyboardEvent} event
  */
 function pinMapHandler(event) {
   if (!isActivateEvent(event)) {
@@ -238,11 +239,11 @@ function pinMapHandler(event) {
 /**
  * Обработчик клика для dialogCloseElement
  *
- * @param {Object} event
+ * @param {KeyboardEvent} event
  */
 function dialogCloseClickHandler(event) {
   event.preventDefault();
-  resetPinActivity();
+  removeSelectedPin();
 }
 
 /**
@@ -294,13 +295,11 @@ function selectTypeInputHandler() {
 /**
  * Обработчик нажатия клавиши для document
  *
- * @param {Object} event
+ * @param {KeyboardEvent} event
  */
 function dialogKeydownHandler(event) {
   if (event.keyCode === keyCodes.ESC) {
-    resetPinActivity();
-    // сбрасываем selectedPinElement для того, чтобы после нажатия esc не срабатывало условие (selectedPinElement === node) в setActivePin()
-    selectedPinElement = pinMapElement.querySelector('.' + classes.PIN_ACTIVE);
+    removeSelectedPin();
   }
 }
 
