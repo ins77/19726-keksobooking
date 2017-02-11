@@ -183,6 +183,7 @@ function setDialogVisibility(flag) {
     document.removeEventListener('keydown', dialogKeydownHandler);
     dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
   } else {
+    dialogCloseElement.focus();
     document.addEventListener('keydown', dialogKeydownHandler);
     dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
   }
@@ -192,8 +193,11 @@ function setDialogVisibility(flag) {
  * Сбрасывает все активные пины, скрывает диалог
  */
 function resetPinActivity() {
+  var pinBtn = selectedPinElement.querySelector('[role="button"]');
+
   selectedPinElement.classList.remove(classes.PIN_ACTIVE);
-  selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
+  pinBtn.focus();
+  pinBtn.setAttribute('aria-pressed', false);
 
   setDialogVisibility(true);
 }
