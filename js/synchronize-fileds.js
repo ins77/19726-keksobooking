@@ -18,9 +18,13 @@ window.synchronizeFields = function (syncField, syncFieldAnother, syncFieldValue
     syncField[syncFieldProp] = syncFieldValues[syncFieldAnotherValues.indexOf(syncFieldAnother.value)];
   }
 
+  syncFieldAnother[syncFieldProp] = syncFieldAnotherValues[syncFieldValues.indexOf(syncField.value)];
+
   syncField.addEventListener('input', syncFieldHandler);
 
   if (syncFieldProp === 'value') {
+    syncField[syncFieldProp] = syncFieldValues[syncFieldAnotherValues.indexOf(syncFieldAnother.value)];
+
     syncFieldAnother.addEventListener('input', syncFieldAnotherHandler);
   }
 };

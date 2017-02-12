@@ -4,20 +4,14 @@ var errors = {
   GREATER_THAN: 'Value length must be greater than or equals to 30'
 };
 
+var TITLE_MIN_VALUE = 30;
+
 var numberOfRooms = ['1', '2', '100'];
 var numberOfGuests = ['0', '3', '3'];
 var timeInValues = ['12', '13', '14'];
 var timeOutValues = timeInValues;
 var typeOfApartments = ['flat', 'shack', 'palace'];
 var apartmentPriceMin = [1000, 0, 10000];
-
-var typeToMinPriceMap = {
-  'flat': 1000,
-  'shack': 0,
-  'palace': 10000
-};
-
-var TITLE_MIN_VALUE = 30;
 
 var formNoticeElement = document.querySelector('.notice__form');
 var inputTitleElement = formNoticeElement.querySelector('#title');
@@ -47,8 +41,7 @@ var config = [
     element: inputPriceElement,
     attr: {
       required: true,
-      max: 1000000,
-      min: typeToMinPriceMap[selectTypeElement.value]
+      max: 1000000
     }
   },
   {
