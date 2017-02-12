@@ -1,30 +1,15 @@
 'use strict';
 
-var keyCodes = {
-  ENTER: 13,
-  ESC: 27
-};
-
-var classes = {
-  DIALOG_INVISIBLE: 'dialog--invisible',
-  PIN: 'pin',
-  PIN_ACTIVE: 'pin--active',
-};
-
 var errors = {
   GREATER_THAN: 'Value length must be greater than or equals to 30'
 };
 
-var numberOfRooms = {
-  ONE: '1',
-  TWO: '2',
-  ONE_HUNDRED: '100'
-};
-
-var numberOfGuests = {
-  NONE: '0',
-  THREE: '3'
-};
+var numberOfRooms = ['1', '2', '100'];
+var numberOfGuests = ['0', '3', '3'];
+var timeInValues = ['12', '13', '14'];
+var timeOutValues = timeInValues;
+var typeOfApartments = ['flat', 'shack', 'palace'];
+var apartmentPriceMin = [1000, 0, 10000];
 
 var typeToMinPriceMap = {
   'flat': 1000,
@@ -34,11 +19,6 @@ var typeToMinPriceMap = {
 
 var TITLE_MIN_VALUE = 30;
 
-var pinMapElement = document.querySelector('.tokyo__pin-map');
-var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
-var selectedPinElement = pinMapElement.querySelector('.pin--active');
-var dialogElement = document.querySelector('.dialog');
-var dialogCloseElement = dialogElement.querySelector('.dialog__close');
 var formNoticeElement = document.querySelector('.notice__form');
 var inputTitleElement = formNoticeElement.querySelector('#title');
 var inputAddressElement = formNoticeElement.querySelector('#address');
@@ -67,7 +47,8 @@ var config = [
     element: inputPriceElement,
     attr: {
       required: true,
-      max: 1000000
+      max: 1000000,
+      min: typeToMinPriceMap[selectTypeElement.value]
     }
   },
   {
@@ -77,20 +58,6 @@ var config = [
     }
   }
 ];
-
-Element.prototype.closest = function (el) {
-  var node = this;
-
-  while (node) {
-    if (node.matches(el)) {
-      return node;
-    } else {
-      node = node.parentElement;
-    }
-  }
-
-  return null;
-};
 
 /**
  * Устанавливает начальные значения полей формы
@@ -112,144 +79,6 @@ function initFormValues(formConfig) {
 }
 
 /**
- * Устанавливает атрибуты aria-pressed
- */
-function initPinAriaPressedAttr() {
-  Array.prototype.forEach.call(pinBtnElements, function (el) {
-    el.setAttribute('aria-pressed', false);
-  });
-}
-
-/**
- * Устанавливает значение поля Цена за ночь
- */
-function setInputPriceMin() {
-  var minPrice = typeToMinPriceMap[selectTypeElement.value];
-  inputPriceElement.min = minPrice;
-}
-
-/**
- * Устанавливает значение поля Количество мест
- */
-function setSelectCapacityValue() {
-  if (selectRoomsElement.value === numberOfRooms.ONE) {
-    selectCapacityElement.value = numberOfGuests.NONE;
-  } else {
-    selectCapacityElement.value = numberOfGuests.THREE;
-  }
-}
-
-/**
- * Устанавливает значение поля Количество комнат
- */
-function setSelectRoomsValue() {
-  if (selectCapacityElement.value === numberOfGuests.NONE) {
-    selectRoomsElement.value = numberOfRooms.ONE;
-  } else {
-    selectRoomsElement.value = numberOfRooms.TWO;
-  }
-}
-
-/**
- * Устанавливает активный пин, убирает активность с других пинов
- *
- * @param {Element} node
- */
-function setActivePin(node) {
-  if (selectedPinElement === node) {
-    return;
-  }
-
-  if (selectedPinElement) {
-    selectedPinElement.classList.remove(classes.PIN_ACTIVE);
-    selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
-  }
-
-  selectedPinElement = node;
-  selectedPinElement.classList.add(classes.PIN_ACTIVE);
-  selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', true);
-}
-
-/**
- * Устанавливает/убирает видимость диалога, устанавливает/удаляет обработчики событий
- *
- * @param {Boolean} flag
- */
-function setDialogVisibility(flag) {
-  dialogElement.classList.toggle(classes.DIALOG_INVISIBLE, !flag);
-  dialogElement.setAttribute('aria-hidden', !flag);
-
-  if (flag) {
-    dialogCloseElement.focus();
-    document.addEventListener('keydown', dialogKeydownHandler);
-    dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
-  } else {
-    document.removeEventListener('keydown', dialogKeydownHandler);
-    dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
-  }
-}
-
-/**
- * Сбрасывает активный пин, скрывает диалог
- */
-function removeSelectedPin() {
-  if (!selectedPinElement) {
-    return;
-  }
-
-  var pinBtn = selectedPinElement.querySelector('[role="button"]');
-
-  selectedPinElement.classList.remove(classes.PIN_ACTIVE);
-  pinBtn.focus();
-  pinBtn.setAttribute('aria-pressed', false);
-  selectedPinElement = null;
-}
-
-/**
- * Проверяет нужная ли клавиша нажата
- *
- * @param {KeyboardEvent} event
- * @return {Boolean}
- */
-function isActivateEvent(event) {
-  return event.keyCode === keyCodes.ENTER || event.type === 'click';
-}
-
-/**
- * Обработчик событий для pinMap
- *
- * @param {KeyboardEvent} event
- */
-function pinMapHandler(event) {
-  if (!isActivateEvent(event)) {
-    return;
-  }
-  var target = event.target;
-  var closestPinElement = target.closest('.' + classes.PIN);
-
-  if (!closestPinElement) {
-    return;
-  }
-
-  if (dialogElement.classList.contains(classes.DIALOG_INVISIBLE)) {
-    setDialogVisibility(true);
-  }
-
-  setActivePin(closestPinElement);
-}
-
-/**
- * Обработчик клика для dialogCloseElement
- *
- * @param {KeyboardEvent} event
- */
-function dialogCloseClickHandler(event) {
-  event.preventDefault();
-  removeSelectedPin();
-  setDialogVisibility(false);
-}
-
-/**
  * Обработчик ввода для inputTitleElement
  */
 function inputTitleInputHandler() {
@@ -260,64 +89,11 @@ function inputTitleInputHandler() {
   }
 }
 
-/**
- * Обработчик ввода для selectTimeOutElement
- */
-function selectTimeOutInputHandler() {
-  selectTimeInElement.value = selectTimeOutElement.value;
-}
-
-/**
- * Обработчик ввода для selectTimeInElement
- */
-function selectTimeInInputHandler() {
-  selectTimeOutElement.value = selectTimeInElement.value;
-}
-
-/**
- * Обработчик ввода для selectRoomsElement
- */
-function selectRoomsInputHandler() {
-  setSelectCapacityValue();
-}
-
-/**
- * Обработчик ввода для selectCapacityElement
- */
-function selectCapacityInputHandler() {
-  setSelectRoomsValue();
-}
-
-/**
- * Обработчик ввода для selectTypeElement
- */
-function selectTypeInputHandler() {
-  setInputPriceMin();
-}
-
-/**
- * Обработчик нажатия клавиши для document
- *
- * @param {KeyboardEvent} event
- */
-function dialogKeydownHandler(event) {
-  if (event.keyCode === keyCodes.ESC) {
-    removeSelectedPin();
-    setDialogVisibility(false);
-  }
-}
-
 initFormValues(config);
-initPinAriaPressedAttr();
-setSelectCapacityValue();
-setSelectRoomsValue();
-setInputPriceMin();
 
-pinMapElement.addEventListener('click', pinMapHandler);
-pinMapElement.addEventListener('keydown', pinMapHandler);
 inputTitleElement.addEventListener('input', inputTitleInputHandler);
-selectTimeInElement.addEventListener('input', selectTimeInInputHandler);
-selectTimeOutElement.addEventListener('input', selectTimeOutInputHandler);
-selectTypeElement.addEventListener('input', selectTypeInputHandler);
-selectRoomsElement.addEventListener('input', selectRoomsInputHandler);
-selectCapacityElement.addEventListener('input', selectCapacityInputHandler);
+
+window.initializePins();
+window.synchronizeFields(selectRoomsElement, selectCapacityElement, numberOfRooms, numberOfGuests, 'value');
+window.synchronizeFields(selectTimeInElement, selectTimeOutElement, timeInValues, timeOutValues, 'value');
+window.synchronizeFields(selectTypeElement, inputPriceElement, typeOfApartments, apartmentPriceMin, 'min');
