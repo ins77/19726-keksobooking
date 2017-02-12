@@ -176,16 +176,16 @@ function setActivePin(node) {
  * @param {Boolean} flag
  */
 function setDialogVisibility(flag) {
-  dialogElement.classList.toggle(classes.DIALOG_INVISIBLE, flag);
-  dialogElement.setAttribute('aria-hidden', flag);
+  dialogElement.classList.toggle(classes.DIALOG_INVISIBLE, !flag);
+  dialogElement.setAttribute('aria-hidden', !flag);
 
   if (flag) {
-    document.removeEventListener('keydown', dialogKeydownHandler);
-    dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
-  } else {
     dialogCloseElement.focus();
     document.addEventListener('keydown', dialogKeydownHandler);
     dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
+  } else {
+    document.removeEventListener('keydown', dialogKeydownHandler);
+    dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
   }
 }
 
@@ -199,8 +199,6 @@ function removeSelectedPin() {
   pinBtn.focus();
   pinBtn.setAttribute('aria-pressed', false);
   selectedPinElement = null;
-
-  setDialogVisibility(true);
 }
 
 /**
@@ -230,7 +228,7 @@ function pinMapHandler(event) {
   }
 
   if (dialogElement.classList.contains(classes.DIALOG_INVISIBLE)) {
-    setDialogVisibility(false);
+    setDialogVisibility(true);
   }
 
   setActivePin(closestPinElement);
@@ -244,6 +242,7 @@ function pinMapHandler(event) {
 function dialogCloseClickHandler(event) {
   event.preventDefault();
   removeSelectedPin();
+  setDialogVisibility(false);
 }
 
 /**
