@@ -193,6 +193,10 @@ function setDialogVisibility(flag) {
  * Сбрасывает активный пин, скрывает диалог
  */
 function removeSelectedPin() {
+  if (!selectedPinElement) {
+    return;
+  }
+
   var pinBtn = selectedPinElement.querySelector('[role="button"]');
 
   selectedPinElement.classList.remove(classes.PIN_ACTIVE);
@@ -299,6 +303,7 @@ function selectTypeInputHandler() {
 function dialogKeydownHandler(event) {
   if (event.keyCode === keyCodes.ESC) {
     removeSelectedPin();
+    setDialogVisibility(false);
   }
 }
 
