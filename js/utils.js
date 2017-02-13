@@ -1,4 +1,6 @@
-window.utils = (function() {
+'use strict';
+
+window.utils = (function () {
 
   /**
    * Возвращает ближайший родительский элемент с selector, если он существует
@@ -7,7 +9,7 @@ window.utils = (function() {
    * @param {string} selector
    * @return {Element}
    */
-  function getClosestElement (element, selector) {
+  function getClosestElement(element, selector) {
     var matchesSelector = element.matches || element.webkitMatchesSelector;
 
     while (element) {
@@ -27,5 +29,5 @@ window.utils = (function() {
       ESC: 27
     },
     getClosestElement: getClosestElement
-  }
+  };
 }());
