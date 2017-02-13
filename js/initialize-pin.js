@@ -19,16 +19,6 @@ window.initializePins = function () {
   var dialogCloseElement = dialogElement.querySelector('.dialog__close');
 
   /**
-   * Проверяет нужная ли клавиша нажата
-   *
-   * @param {KeyboardEvent} event
-   * @return {Boolean}
-   */
-  function isActivateEvent(event) {
-    return event.keyCode === utils.KeyCodes.ENTER || event.type === 'click';
-  }
-
-  /**
    * Устанавливает атрибуты aria-pressed
    */
   function initPinAriaPressedAttr() {
@@ -96,7 +86,7 @@ window.initializePins = function () {
    * @param {KeyboardEvent} event
    */
   function pinMapHandler(event) {
-    if (!isActivateEvent(event)) {
+    if (!utils.isActivateEvent(event)) {
       return;
     }
     var target = event.target;

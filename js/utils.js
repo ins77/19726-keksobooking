@@ -23,11 +23,22 @@ window.utils = (function () {
     return null;
   }
 
+  /**
+   * Проверяет нужная ли клавиша нажата
+   *
+   * @param {KeyboardEvent} event
+   * @return {Boolean}
+   */
+  function isActivateEvent(event) {
+    return event.keyCode === this.KeyCodes.ENTER || event.type === 'click';
+  }
+
   return {
     KeyCodes: {
       ENTER: 13,
       ESC: 27
     },
-    getClosestElement: getClosestElement
+    getClosestElement: getClosestElement,
+    isActivateEvent: isActivateEvent
   };
 }());
