@@ -5,13 +5,12 @@ var errors = {
 };
 
 var TITLE_MIN_VALUE = 30;
-
-var numberOfRooms = ['1', '2', '100'];
-var numberOfGuests = ['0', '3', '3'];
-var timeInValues = ['12', '13', '14'];
-var timeOutValues = timeInValues;
-var typeOfApartments = ['flat', 'shack', 'palace'];
-var apartmentPriceMin = [1000, 0, 10000];
+var NUMBER_OF_ROOMS = ['1', '2', '100'];
+var NUMBER_OF_GUESTS = ['0', '3', '3'];
+var TIME_IN_VALUES = ['12', '13', '14'];
+var TIME_OUT_VALUES = Array.prototype.slice.call(TIME_IN_VALUES);
+var TYPE_OF_APARTAMENTS = ['flat', 'shack', 'palace'];
+var APARTMENTS_PRICE_MIN = [1000, 0, 10000];
 
 var formNoticeElement = document.querySelector('.notice__form');
 var inputTitleElement = formNoticeElement.querySelector('#title');
@@ -82,11 +81,51 @@ function inputTitleInputHandler() {
   }
 }
 
+/**
+ * Обработчик ввода для selectRoomsElement
+ */
+function selectRoomsHandler() {
+  window.synchronizeFields(selectRoomsElement, selectCapacityElement, NUMBER_OF_ROOMS, NUMBER_OF_GUESTS, 'value');
+}
+
+/**
+ * Обработчик ввода для selectCapacityElement
+ */
+function selectCapacityHandler() {
+  window.synchronizeFields(selectCapacityElement, selectRoomsElement, NUMBER_OF_GUESTS, NUMBER_OF_ROOMS, 'value');
+}
+
+/**
+ * Обработчик ввода для selectTimeInElement
+ */
+function selectTimeInHanlder() {
+  window.synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, 'value');
+}
+
+/**
+ * Обработчик ввода для selectTimeOutElement
+ */
+function selectTimeOutHandler() {
+  window.synchronizeFields(selectTimeOutElement, selectTimeInElement, TIME_OUT_VALUES, TIME_IN_VALUES, 'value');
+}
+
+/**
+ * Обработчик ввода для selectTypeElement
+ */
+function selectTypeHandler() {
+  window.synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, 'min');
+}
+
 initFormValues(config);
 
 inputTitleElement.addEventListener('input', inputTitleInputHandler);
+selectRoomsElement.addEventListener('input', selectRoomsHandler);
+selectCapacityElement.addEventListener('input', selectCapacityHandler);
+selectTimeInElement.addEventListener('input', selectTimeInHanlder);
+selectTimeOutElement.addEventListener('input', selectTimeOutHandler);
+selectTypeElement.addEventListener('input', selectTypeHandler);
 
 window.initializePins();
-window.synchronizeFields(selectRoomsElement, selectCapacityElement, numberOfRooms, numberOfGuests, 'value');
-window.synchronizeFields(selectTimeInElement, selectTimeOutElement, timeInValues, timeOutValues, 'value');
-window.synchronizeFields(selectTypeElement, inputPriceElement, typeOfApartments, apartmentPriceMin, 'min');
+window.synchronizeFields(selectRoomsElement, selectCapacityElement, NUMBER_OF_ROOMS, NUMBER_OF_GUESTS, 'value');
+window.synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, 'value');
+window.synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, 'min');

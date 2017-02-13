@@ -1,30 +1,14 @@
 'use strict';
 
 /**
- * Синхронизирует поля syncField и syncFieldAnother между собой, выставляя соотвтествующее значение из массивов syncFieldValues и syncFieldAnotherValues
+ * Синхронизирует поля firstField и secondField. Выставляет соответствующее значение secondField из массива secondFieldValues, в зависимости от позиции значения firstField в массиве firstFieldValues
  *
- * @param {Element} syncField
- * @param {Element} syncFieldAnother
- * @param {Array} syncFieldValues
- * @param {Array} syncFieldAnotherValues
- * @param {string} syncFieldProp
+ * @param {Element} firstField
+ * @param {Element} secondField
+ * @param {Array} firstFieldValues
+ * @param {Array} secondFieldValues
+ * @param {string} secondFieldProp
  */
-window.synchronizeFields = function (syncField, syncFieldAnother, syncFieldValues, syncFieldAnotherValues, syncFieldProp) {
-  function syncFieldHandler() {
-    syncFieldAnother[syncFieldProp] = syncFieldAnotherValues[syncFieldValues.indexOf(syncField.value)];
-  }
-
-  function syncFieldAnotherHandler() {
-    syncField[syncFieldProp] = syncFieldValues[syncFieldAnotherValues.indexOf(syncFieldAnother.value)];
-  }
-
-  syncFieldAnother[syncFieldProp] = syncFieldAnotherValues[syncFieldValues.indexOf(syncField.value)];
-
-  syncField.addEventListener('input', syncFieldHandler);
-
-  if (syncFieldProp === 'value') {
-    syncField[syncFieldProp] = syncFieldValues[syncFieldAnotherValues.indexOf(syncFieldAnother.value)];
-
-    syncFieldAnother.addEventListener('input', syncFieldAnotherHandler);
-  }
+window.synchronizeFields = function (firstField, secondField, firstFieldValues, secondFieldValues, secondFieldProp) {
+  secondField[secondFieldProp] = secondFieldValues[firstFieldValues.indexOf(firstField.value)];
 };

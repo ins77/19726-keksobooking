@@ -4,12 +4,9 @@
  * Отрисовка пинов, диалога
  */
 window.initializePins = function () {
-  var keyCodes = {
-    ENTER: 13,
-    ESC: 27
-  };
+  var utils = window.utils;
 
-  var classes = {
+  var ClassNames = {
     DIALOG_INVISIBLE: 'dialog--invisible',
     PIN: 'pin',
     PIN_ACTIVE: 'pin--active',
@@ -21,20 +18,6 @@ window.initializePins = function () {
   var dialogElement = document.querySelector('.dialog');
   var dialogCloseElement = dialogElement.querySelector('.dialog__close');
 
-  Element.prototype.closest = function (el) {
-    var node = this;
-
-    while (node) {
-      if (node.matches(el)) {
-        return node;
-      } else {
-        node = node.parentElement;
-      }
-    }
-
-    return null;
-  };
-
   /**
    * Проверяет нужная ли клавиша нажата
    *
@@ -42,7 +25,7 @@ window.initializePins = function () {
    * @return {Boolean}
    */
   function isActivateEvent(event) {
-    return event.keyCode === keyCodes.ENTER || event.type === 'click';
+    return event.keyCode === utils.KeyCodes.ENTER || event.type === 'click';
   }
 
   /**
@@ -65,12 +48,12 @@ window.initializePins = function () {
     }
 
     if (selectedPinElement) {
-      selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+      selectedPinElement.classList.remove(ClassNames.PIN_ACTIVE);
       selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
     }
 
     selectedPinElement = node;
-    selectedPinElement.classList.add(classes.PIN_ACTIVE);
+    selectedPinElement.classList.add(ClassNames.PIN_ACTIVE);
     selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', true);
   }
 
@@ -80,7 +63,7 @@ window.initializePins = function () {
    * @param {Boolean} flag
    */
   function setDialogVisibility(flag) {
-    dialogElement.classList.toggle(classes.DIALOG_INVISIBLE, flag);
+    dialogElement.classList.toggle(ClassNames.DIALOG_INVISIBLE, flag);
     dialogElement.setAttribute('aria-hidden', flag);
 
     if (flag) {
@@ -99,7 +82,7 @@ window.initializePins = function () {
   function removeSelectedPin() {
     var pinBtn = selectedPinElement.querySelector('[role="button"]');
 
-    selectedPinElement.classList.remove(classes.PIN_ACTIVE);
+    selectedPinElement.classList.remove(ClassNames.PIN_ACTIVE);
     pinBtn.focus();
     pinBtn.setAttribute('aria-pressed', false);
     selectedPinElement = null;
@@ -117,13 +100,13 @@ window.initializePins = function () {
       return;
     }
     var target = event.target;
-    var closestPinElement = target.closest('.' + classes.PIN);
+    var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
 
     if (!closestPinElement) {
       return;
     }
 
-    if (dialogElement.classList.contains(classes.DIALOG_INVISIBLE)) {
+    if (dialogElement.classList.contains(ClassNames.DIALOG_INVISIBLE)) {
       setDialogVisibility(false);
     }
 
@@ -146,7 +129,7 @@ window.initializePins = function () {
    * @param {KeyboardEvent} event
    */
   function dialogKeydownHandler(event) {
-    if (event.keyCode === keyCodes.ESC) {
+    if (event.keyCode === utils.KeyCodes.ESC) {
       removeSelectedPin();
     }
   }
