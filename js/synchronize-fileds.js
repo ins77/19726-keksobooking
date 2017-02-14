@@ -10,5 +10,7 @@
  * @param {string} secondFieldProp
  */
 window.synchronizeFields = function (firstField, secondField, firstFieldValues, secondFieldValues, secondFieldProp) {
-  secondField[secondFieldProp] = secondFieldValues[firstFieldValues.indexOf(firstField.value)];
+  firstField.addEventListener('input', function () {
+    secondField[secondFieldProp] = secondFieldValues[firstFieldValues.indexOf(firstField.value)];
+  });
 };

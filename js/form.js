@@ -40,7 +40,8 @@ var config = [
     element: inputPriceElement,
     attr: {
       required: true,
-      max: 1000000
+      max: 1000000,
+      min: 1000
     }
   },
   {
@@ -81,51 +82,13 @@ function inputTitleInputHandler() {
   }
 }
 
-/**
- * Обработчик ввода для selectRoomsElement
- */
-function selectRoomsHandler() {
-  window.synchronizeFields(selectRoomsElement, selectCapacityElement, NUMBER_OF_ROOMS, NUMBER_OF_GUESTS, 'value');
-}
-
-/**
- * Обработчик ввода для selectCapacityElement
- */
-function selectCapacityHandler() {
-  window.synchronizeFields(selectCapacityElement, selectRoomsElement, NUMBER_OF_GUESTS, NUMBER_OF_ROOMS, 'value');
-}
-
-/**
- * Обработчик ввода для selectTimeInElement
- */
-function selectTimeInHanlder() {
-  window.synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, 'value');
-}
-
-/**
- * Обработчик ввода для selectTimeOutElement
- */
-function selectTimeOutHandler() {
-  window.synchronizeFields(selectTimeOutElement, selectTimeInElement, TIME_OUT_VALUES, TIME_IN_VALUES, 'value');
-}
-
-/**
- * Обработчик ввода для selectTypeElement
- */
-function selectTypeHandler() {
-  window.synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, 'min');
-}
-
 initFormValues(config);
 
 inputTitleElement.addEventListener('input', inputTitleInputHandler);
-selectRoomsElement.addEventListener('input', selectRoomsHandler);
-selectCapacityElement.addEventListener('input', selectCapacityHandler);
-selectTimeInElement.addEventListener('input', selectTimeInHanlder);
-selectTimeOutElement.addEventListener('input', selectTimeOutHandler);
-selectTypeElement.addEventListener('input', selectTypeHandler);
 
 window.initializePins();
 window.synchronizeFields(selectRoomsElement, selectCapacityElement, NUMBER_OF_ROOMS, NUMBER_OF_GUESTS, 'value');
+window.synchronizeFields(selectCapacityElement, selectRoomsElement, NUMBER_OF_GUESTS, NUMBER_OF_ROOMS, 'value');
 window.synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, 'value');
+window.synchronizeFields(selectTimeOutElement, selectTimeInElement, TIME_OUT_VALUES, TIME_IN_VALUES, 'value');
 window.synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, 'min');

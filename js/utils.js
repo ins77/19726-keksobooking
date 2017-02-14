@@ -30,7 +30,7 @@ window.utils = (function () {
    * @return {Boolean}
    */
   function isActivateEvent(event) {
-    return event.keyCode === this.KeyCodes.ENTER || event.type === 'click';
+    return event.keyCode === window.utils.KeyCodes.ENTER || event.type === 'click';
   }
 
   return {
