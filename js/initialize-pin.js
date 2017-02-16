@@ -130,6 +130,5 @@ window.initializePins = (function () {
 
     pinMapElement.addEventListener('click', pinMapHandler);
     pinMapElement.addEventListener('keydown', pinMapHandler);
-  }
-
+  };
 })();

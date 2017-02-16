@@ -14,5 +14,5 @@ window.synchronizeFields = (function () {
     firstField.addEventListener('input', function () {
       secondField[secondFieldProp] = secondFieldValues[firstFieldValues.indexOf(firstField.value)];
     });
-  }
+  };
 })();
