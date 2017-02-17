@@ -3,7 +3,7 @@
 /**
  * Отрисовка пинов, диалога
  */
-window.initializePins = function () {
+window.initializePins = (function () {
   var utils = window.utils;
 
   var ClassNames = {
@@ -126,6 +126,8 @@ window.initializePins = function () {
 
   initPinAriaPressedAttr();
 
-  pinMapElement.addEventListener('click', pinMapHandler);
-  pinMapElement.addEventListener('keydown', pinMapHandler);
-};
+  return function () {
+    pinMapElement.addEventListener('click', pinMapHandler);
+    pinMapElement.addEventListener('keydown', pinMapHandler);
+  };
+})();
