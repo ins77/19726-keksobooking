@@ -5,9 +5,9 @@
  */
 (function () {
   var utils = window.utils;
+  var showCard = window.showCard;
 
   var ClassNames = {
-    DIALOG_INVISIBLE: 'dialog--invisible',
     PIN: 'pin',
     PIN_ACTIVE: 'pin--active',
   };
@@ -15,8 +15,6 @@
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
-  var dialogElement = document.querySelector('.dialog');
-  var isDialogShowsAfterKeydown = false;
 
   /**
    * Устанавливает атрибуты aria-pressed
@@ -51,65 +49,47 @@
    * Сбрасывает активный пин, скрывает диалог
    */
   function removeSelectedPin() {
-    var pinBtn = selectedPinElement.querySelector('[role="button"]');
-
     selectedPinElement.classList.remove(ClassNames.PIN_ACTIVE);
-    pinBtn.focus();
-    pinBtn.setAttribute('aria-pressed', false);
+    selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
     selectedPinElement = null;
-
-    isDialogShowsAfterKeydown = false;
   }
 
   /**
-   * Переключает активный пин, скрывает диалог
+   * Обработчик событий для pinMap
    *
    * @param {KeyboardEvent} event
    */
-  function toggleSelectedPin(event) {
+  function pinMapHandler(event) {
     if (!utils.isActivateEvent(event)) {
       return;
     }
+
     var target = event.target;
     var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
+    var cb = null;
 
     if (!closestPinElement) {
       return;
     }
 
-    if (dialogElement.classList.contains(ClassNames.DIALOG_INVISIBLE)) {
-      window.showCard();
+    if (event.type === 'click') {
+      cb = function () {
+        removeSelectedPin();
+      };
+    } else if (event.type === 'keydown') {
+      cb = function () {
+        selectedPinElement.querySelector('[role="button"]').focus();
+        removeSelectedPin();
+      };
     }
 
+    showCard(cb);
     setActivePin(closestPinElement);
-  }
-
-  /**
-   * Обработчик клавиатурных событий для pinMap
-   *
-   * @param {KeyboardEvent} event
-   */
-  function pinMapKeydownHandler(event) {
-    isDialogShowsAfterKeydown = true;
-    toggleSelectedPin(event);
-
-    if (isDialogShowsAfterKeydown) {
-      window.showCard(removeSelectedPin);
-    }
-  }
-
-  /**
-   * Обработчик клика для pinMap
-   *
-   * @param {KeyboardEvent} event
-   */
-  function pinMapClickHandler(event) {
-    toggleSelectedPin(event);
   }
 
 
   initPinAriaPressedAttr();
 
-  pinMapElement.addEventListener('click', pinMapClickHandler);
-  pinMapElement.addEventListener('keydown', pinMapKeydownHandler);
+  pinMapElement.addEventListener('click', pinMapHandler);
+  pinMapElement.addEventListener('keydown', pinMapHandler);
 })();

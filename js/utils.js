@@ -33,12 +33,17 @@ window.utils = (function () {
     return event.keyCode === window.utils.KeyCodes.ENTER || event.type === 'click';
   }
 
+  function isFunction(arg) {
+    return typeof arg === 'function';
+  }
+
   return {
     KeyCodes: {
       ENTER: 13,
       ESC: 27
     },
     getClosestElement: getClosestElement,
-    isActivateEvent: isActivateEvent
+    isActivateEvent: isActivateEvent,
+    isFunction: isFunction
   };
 }());

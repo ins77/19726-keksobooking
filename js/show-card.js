@@ -7,7 +7,28 @@ window.showCard = (function () {
 
   var dialogElement = document.querySelector('.dialog');
   var dialogCloseElement = dialogElement.querySelector('.dialog__close');
-  var onDialogClose = null;
+  var cb;
+
+  /**
+   * Закрывает диалог
+   */
+  function closeDialog() {
+    removeDialogHanldlers();
+    toggleVisibility(false);
+    if (cb) {
+      cb();
+    }
+  }
+
+  /**
+   * Показывает / скрывает диалог
+   *
+   * @param {boolean} flag
+   */
+  function toggleVisibility(flag) {
+    dialogElement.classList.toggle(DIALOG_INVISIBLE, !flag);
+    dialogElement.setAttribute('aria-hidden', toString(!flag));
+  }
 
   /**
    * Обработчик клика для dialogCloseElement
@@ -16,10 +37,7 @@ window.showCard = (function () {
    */
   function dialogCloseClickHandler(event) {
     event.preventDefault();
-    removeDialogHanldlers();
-    if (typeof callback === 'function') {
-      onDialogClose();
-    }
+    closeDialog();
   }
 
   /**
@@ -29,10 +47,7 @@ window.showCard = (function () {
    */
   function dialogKeydownHandler(event) {
     if (event.keyCode === utils.KeyCodes.ESC) {
-      removeDialogHanldlers();
-      if (typeof callback === 'function') {
-        onDialogClose();
-      }
+      closeDialog();
     }
   }
 
@@ -45,22 +60,16 @@ window.showCard = (function () {
   }
 
   /**
-   * Показывает / скрывает диалог
+   * Показывает диалог
    *
    * @param {Function} callback
    */
   return function (callback) {
-    var flag = true;
+    cb = utils.isFunction(callback) ? callback : null;
 
-    if (typeof callback === 'function') {
-      flag = false;
-      onDialogClose = callback;
-    }
+    toggleVisibility(true);
 
     document.addEventListener('keydown', dialogKeydownHandler);
     dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
-
-    dialogElement.classList.toggle(DIALOG_INVISIBLE, !flag);
-    dialogElement.setAttribute('aria-hidden', !flag);
   };
 })();
