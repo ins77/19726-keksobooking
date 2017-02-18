@@ -8,11 +8,12 @@ window.synchronizeFields = (function () {
    * @param {Element} secondField
    * @param {Array} firstFieldValues
    * @param {Array} secondFieldValues
-   * @param {string} secondFieldProp
+   * @param {Function} syncValues
    */
-  return function (firstField, secondField, firstFieldValues, secondFieldValues, secondFieldProp) {
+  return function (firstField, secondField, firstFieldValues, secondFieldValues, syncValues) {
     firstField.addEventListener('input', function () {
-      secondField[secondFieldProp] = secondFieldValues[firstFieldValues.indexOf(firstField.value)];
+      var secondFieldValue = secondFieldValues[firstFieldValues.indexOf(firstField.value)];
+      syncValues(secondField, secondFieldValue);
     });
   };
 })();

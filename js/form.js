@@ -84,15 +84,34 @@
     }
   }
 
+  /**
+   * Синхронизирует значения полей, переданных в synchronizeFields(). Используется в качестве callback в synchronizeFields()
+   *
+   * @param {Element} element
+   * @param {(string|number)} value
+   */
+  function syncValues(element, value) {
+    element.value = value;
+  }
+
+  /**
+   * Синхронизирует значение свойства min со значением firstField в synchronizeFields(). Используется в качестве callback в synchronizeFields()
+   *
+   * @param {Element} element
+   * @param {(string|number)} value
+   */
+  function syncValueWithMin(element, value) {
+    element.min = value;
+  }
+
   initFormValues(config);
 
   inputTitleElement.addEventListener('input', inputTitleInputHandler);
 
-  window.initializePins();
-  window.synchronizeFields(selectRoomsElement, selectCapacityElement, NUMBER_OF_ROOMS, NUMBER_OF_GUESTS, 'value');
-  window.synchronizeFields(selectCapacityElement, selectRoomsElement, NUMBER_OF_GUESTS, NUMBER_OF_ROOMS, 'value');
-  window.synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, 'value');
-  window.synchronizeFields(selectTimeOutElement, selectTimeInElement, TIME_OUT_VALUES, TIME_IN_VALUES, 'value');
-  window.synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, 'min');
+  window.synchronizeFields(selectRoomsElement, selectCapacityElement, NUMBER_OF_ROOMS, NUMBER_OF_GUESTS, syncValues);
+  window.synchronizeFields(selectCapacityElement, selectRoomsElement, NUMBER_OF_GUESTS, NUMBER_OF_ROOMS, syncValues);
+  window.synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, syncValues);
+  window.synchronizeFields(selectTimeOutElement, selectTimeInElement, TIME_OUT_VALUES, TIME_IN_VALUES, syncValues);
+  window.synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, syncValueWithMin);
 
 })();
