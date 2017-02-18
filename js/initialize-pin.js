@@ -16,7 +16,6 @@
   var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
   var dialogElement = document.querySelector('.dialog');
-  var dialogCloseElement = dialogElement.querySelector('.dialog__close');
   var isDialogShowsAfterKeydown = false;
 
   /**
@@ -55,15 +54,9 @@
     var pinBtn = selectedPinElement.querySelector('[role="button"]');
 
     selectedPinElement.classList.remove(ClassNames.PIN_ACTIVE);
+    pinBtn.focus();
     pinBtn.setAttribute('aria-pressed', false);
     selectedPinElement = null;
-    console.log(isDialogShowsAfterKeydown);
-
-    window.showCard(function () {
-      if (isDialogShowsAfterKeydown) {
-        pinBtn.focus();
-      }
-    });
 
     isDialogShowsAfterKeydown = false;
   }
@@ -86,8 +79,6 @@
 
     if (dialogElement.classList.contains(ClassNames.DIALOG_INVISIBLE)) {
       window.showCard();
-      document.addEventListener('keydown', dialogKeydownHandler);
-      dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
     }
 
     setActivePin(closestPinElement);
@@ -99,7 +90,12 @@
    * @param {KeyboardEvent} event
    */
   function pinMapKeydownHandler(event) {
+    isDialogShowsAfterKeydown = true;
     toggleSelectedPin(event);
+
+    if (isDialogShowsAfterKeydown) {
+      window.showCard(removeSelectedPin);
+    }
   }
 
   /**
@@ -111,36 +107,6 @@
     toggleSelectedPin(event);
   }
 
-  /**
-   * Обработчик клика для dialogCloseElement
-   *
-   * @param {KeyboardEvent} event
-   */
-  function dialogCloseClickHandler(event) {
-    event.preventDefault();
-    removeSelectedPin();
-    removeDialogHanldlers();
-  }
-
-  /**
-   * Обработчик нажатия клавиши для document
-   *
-   * @param {KeyboardEvent} event
-   */
-  function dialogKeydownHandler(event) {
-    if (event.keyCode === utils.KeyCodes.ESC) {
-      removeSelectedPin();
-      removeDialogHanldlers();
-    }
-  }
-
-  /**
-   * Удаляет обработчики диалога
-   */
-  function removeDialogHanldlers() {
-    document.removeEventListener('keydown', dialogKeydownHandler);
-    dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
-  }
 
   initPinAriaPressedAttr();
 
