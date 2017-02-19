@@ -66,17 +66,15 @@
 
     var target = event.target;
     var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
-    var cb = null;
+    var cb = function () {
+      removeSelectedPin();
+    };
 
     if (!closestPinElement) {
       return;
     }
 
-    if (event.type === 'click') {
-      cb = function () {
-        removeSelectedPin();
-      };
-    } else if (event.type === 'keydown') {
+    if (event.type === 'keydown') {
       cb = function () {
         selectedPinElement.querySelector('[role="button"]').focus();
         removeSelectedPin();
