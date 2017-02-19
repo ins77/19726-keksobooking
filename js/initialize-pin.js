@@ -25,6 +25,11 @@
     });
   }
 
+  function selectPin(pinElement, flag) {
+    pinElement.classList.toggle(ClassNames.PIN_ACTIVE, flag);
+    pinElement.querySelector('[role="button"]').setAttribute('aria-pressed', flag);
+  }
+
   /**
    * Устанавливает активный пин, убирает активность с других пинов
    *
@@ -36,21 +41,18 @@
     }
 
     if (selectedPinElement) {
-      selectedPinElement.classList.remove(ClassNames.PIN_ACTIVE);
-      selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
+      selectPin(selectedPinElement, false);
     }
 
     selectedPinElement = node;
-    selectedPinElement.classList.add(ClassNames.PIN_ACTIVE);
-    selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', true);
+    selectPin(selectedPinElement, true);
   }
 
   /**
    * Сбрасывает активный пин, скрывает диалог
    */
   function removeSelectedPin() {
-    selectedPinElement.classList.remove(ClassNames.PIN_ACTIVE);
-    selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
+    selectPin(selectedPinElement, false);
     selectedPinElement = null;
   }
 
@@ -66,23 +68,23 @@
 
     var target = event.target;
     var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
-    var cb = function () {
-      removeSelectedPin();
-    };
+    var cb;
 
     if (!closestPinElement) {
       return;
     }
 
-    if (event.type === 'keydown') {
+    if (event.type === 'click') {
+      cb = removeSelectedPin;
+    } else {
       cb = function () {
         selectedPinElement.querySelector('[role="button"]').focus();
         removeSelectedPin();
       };
     }
 
-    showCard(cb);
     setActivePin(closestPinElement);
+    showCard(cb);
   }
 
 

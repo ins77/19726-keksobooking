@@ -2,6 +2,8 @@
 
 (function () {
 
+  var synchronizeFields = window.synchronizeFields;
+
   var errors = {
     GREATER_THAN: 'Value length must be greater than or equals to 30'
   };
@@ -108,10 +110,10 @@
 
   inputTitleElement.addEventListener('input', inputTitleInputHandler);
 
-  window.synchronizeFields(selectRoomsElement, selectCapacityElement, NUMBER_OF_ROOMS, NUMBER_OF_GUESTS, syncValues);
-  window.synchronizeFields(selectCapacityElement, selectRoomsElement, NUMBER_OF_GUESTS, NUMBER_OF_ROOMS, syncValues);
-  window.synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, syncValues);
-  window.synchronizeFields(selectTimeOutElement, selectTimeInElement, TIME_OUT_VALUES, TIME_IN_VALUES, syncValues);
-  window.synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, syncValueWithMin);
+  synchronizeFields(selectRoomsElement, selectCapacityElement, NUMBER_OF_ROOMS, NUMBER_OF_GUESTS, syncValues);
+  synchronizeFields(selectCapacityElement, selectRoomsElement, NUMBER_OF_GUESTS, NUMBER_OF_ROOMS, syncValues);
+  synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, syncValues);
+  synchronizeFields(selectTimeOutElement, selectTimeInElement, TIME_OUT_VALUES, TIME_IN_VALUES, syncValues);
+  synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, syncValueWithMin);
 
 })();

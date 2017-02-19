@@ -1,6 +1,10 @@
 'use strict';
 
 window.utils = (function () {
+  var KeyCodes = {
+    ENTER: 13,
+    ESC: 27
+  };
 
   /**
    * Возвращает ближайший родительский элемент с selector, если он существует
@@ -10,7 +14,7 @@ window.utils = (function () {
    * @return {Element}
    */
   function getClosestElement(element, selector) {
-    var matchesSelector = element.matches || element.webkitMatchesSelector;
+    var matchesSelector = element.matches || element.webkitMatchesSelector || element.msMatchesSelector;
 
     while (element) {
       if (matchesSelector.call(element, selector)) {
@@ -38,10 +42,7 @@ window.utils = (function () {
   }
 
   return {
-    KeyCodes: {
-      ENTER: 13,
-      ESC: 27
-    },
+    KeyCodes: KeyCodes,
     getClosestElement: getClosestElement,
     isActivateEvent: isActivateEvent,
     isFunction: isFunction

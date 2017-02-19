@@ -27,7 +27,7 @@ window.showCard = (function () {
    */
   function toggleVisibility(flag) {
     dialogElement.classList.toggle(DIALOG_INVISIBLE, !flag);
-    dialogElement.setAttribute('aria-hidden', toString(!flag));
+    dialogElement.setAttribute('aria-hidden', !flag);
   }
 
   /**
