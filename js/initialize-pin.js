@@ -6,11 +6,14 @@
 (function () {
   var utils = window.utils;
   var showCard = window.showCard;
+  var load = window.load;
 
   var ClassNames = {
     PIN: 'pin',
     PIN_ACTIVE: 'pin--active',
   };
+
+  var DATA_URL = 'https://intensive-javascript-server-pedmyactpq.now.sh/keksobooking/data';
 
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
@@ -87,9 +90,38 @@
     showCard(cb);
   }
 
-
   initPinAriaPressedAttr();
+
+  function renderPins(data) {
+    var similarApartments = [];
+    // var fragment = document.createDocumentFragment();
+
+    data.forEach(function (element) {
+      similarApartments.push(element);
+    });
+
+    var templateElement = document.querySelector('#pin-template');
+    var elementToClone = templateElement.content.querySelector('.pin');
+    var similarApartmentsToRender = similarApartments.slice(0, 3);
+    var newElement;
+
+    similarApartmentsToRender.forEach(function (element) {
+      newElement.querySelector('img');
+      newElement = elementToClone.cloneNode(true);
+      newElement.style.left = element.location.x + 'px';
+      newElement.style.top = element.location.y + 'px';
+      document.body.appendChild(newElement);
+    });
+  }
+
+  load(DATA_URL, renderPins);
 
   pinMapElement.addEventListener('click', pinMapHandler);
   pinMapElement.addEventListener('keydown', pinMapHandler);
+
+
+  // newElement.addEventListener('click', function () {
+  //
+  // });
+
 })();
