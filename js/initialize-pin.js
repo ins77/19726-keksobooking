@@ -3,11 +3,11 @@
 /**
  * Отрисовка пинов, диалога
  */
-window.initializePins = (function () {
+(function () {
   var utils = window.utils;
+  var showCard = window.showCard;
 
   var ClassNames = {
-    DIALOG_INVISIBLE: 'dialog--invisible',
     PIN: 'pin',
     PIN_ACTIVE: 'pin--active',
   };
@@ -15,8 +15,6 @@ window.initializePins = (function () {
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
-  var dialogElement = document.querySelector('.dialog');
-  var dialogCloseElement = dialogElement.querySelector('.dialog__close');
 
   /**
    * Устанавливает атрибуты aria-pressed
@@ -25,6 +23,11 @@ window.initializePins = (function () {
     Array.prototype.forEach.call(pinBtnElements, function (el) {
       el.setAttribute('aria-pressed', false);
     });
+  }
+
+  function selectPin(pinElement, flag) {
+    pinElement.classList.toggle(ClassNames.PIN_ACTIVE, flag);
+    pinElement.querySelector('[role="button"]').setAttribute('aria-pressed', flag);
   }
 
   /**
@@ -38,46 +41,19 @@ window.initializePins = (function () {
     }
 
     if (selectedPinElement) {
-      selectedPinElement.classList.remove(ClassNames.PIN_ACTIVE);
-      selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', false);
+      selectPin(selectedPinElement, false);
     }
 
     selectedPinElement = node;
-    selectedPinElement.classList.add(ClassNames.PIN_ACTIVE);
-    selectedPinElement.querySelector('[role="button"]').setAttribute('aria-pressed', true);
-  }
-
-  /**
-   * Устанавливает/убирает видимость диалога, устанавливает/удаляет обработчики событий
-   *
-   * @param {Boolean} flag
-   */
-  function setDialogVisibility(flag) {
-    dialogElement.classList.toggle(ClassNames.DIALOG_INVISIBLE, flag);
-    dialogElement.setAttribute('aria-hidden', flag);
-
-    if (flag) {
-      document.removeEventListener('keydown', dialogKeydownHandler);
-      dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
-    } else {
-      dialogCloseElement.focus();
-      document.addEventListener('keydown', dialogKeydownHandler);
-      dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
-    }
+    selectPin(selectedPinElement, true);
   }
 
   /**
    * Сбрасывает активный пин, скрывает диалог
    */
   function removeSelectedPin() {
-    var pinBtn = selectedPinElement.querySelector('[role="button"]');
-
-    selectedPinElement.classList.remove(ClassNames.PIN_ACTIVE);
-    pinBtn.focus();
-    pinBtn.setAttribute('aria-pressed', false);
+    selectPin(selectedPinElement, false);
     selectedPinElement = null;
-
-    setDialogVisibility(true);
   }
 
   /**
@@ -89,45 +65,31 @@ window.initializePins = (function () {
     if (!utils.isActivateEvent(event)) {
       return;
     }
+
     var target = event.target;
     var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
+    var cb;
 
     if (!closestPinElement) {
       return;
     }
 
-    if (dialogElement.classList.contains(ClassNames.DIALOG_INVISIBLE)) {
-      setDialogVisibility(false);
+    if (event.type === 'click') {
+      cb = removeSelectedPin;
+    } else {
+      cb = function () {
+        selectedPinElement.querySelector('[role="button"]').focus();
+        removeSelectedPin();
+      };
     }
 
     setActivePin(closestPinElement);
+    showCard(cb);
   }
 
-  /**
-   * Обработчик клика для dialogCloseElement
-   *
-   * @param {KeyboardEvent} event
-   */
-  function dialogCloseClickHandler(event) {
-    event.preventDefault();
-    removeSelectedPin();
-  }
-
-  /**
-   * Обработчик нажатия клавиши для document
-   *
-   * @param {KeyboardEvent} event
-   */
-  function dialogKeydownHandler(event) {
-    if (event.keyCode === utils.KeyCodes.ESC) {
-      removeSelectedPin();
-    }
-  }
 
   initPinAriaPressedAttr();
 
-  return function () {
-    pinMapElement.addEventListener('click', pinMapHandler);
-    pinMapElement.addEventListener('keydown', pinMapHandler);
-  };
+  pinMapElement.addEventListener('click', pinMapHandler);
+  pinMapElement.addEventListener('keydown', pinMapHandler);
 })();
