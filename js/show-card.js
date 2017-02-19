@@ -63,8 +63,9 @@ window.showCard = (function () {
    * Показывает диалог
    *
    * @param {Function} callback
+   * @param {Array} data
    */
-  return function (callback) {
+  return function (callback, data) {
     cb = utils.isFunction(callback) ? callback : null;
 
     toggleVisibility(true);
