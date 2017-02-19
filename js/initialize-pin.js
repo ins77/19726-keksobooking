@@ -94,7 +94,7 @@
 
   function renderPins(data) {
     var similarApartments = [];
-    // var fragment = document.createDocumentFragment();
+    var fragment = document.createDocumentFragment();
 
     data.forEach(function (element) {
       similarApartments.push(element);
@@ -106,11 +106,12 @@
     var newElement;
 
     similarApartmentsToRender.forEach(function (element) {
-      newElement.querySelector('img');
       newElement = elementToClone.cloneNode(true);
+      var image = newElement.querySelector('img');
+      image.src = element.author.avatar;
       newElement.style.left = element.location.x + 'px';
       newElement.style.top = element.location.y + 'px';
-      document.body.appendChild(newElement);
+      fragment.appendChild(newElement);
     });
   }
 
