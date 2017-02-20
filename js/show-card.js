@@ -3,7 +3,101 @@
 window.showCard = (function () {
   var utils = window.utils;
 
+  var DIALOG_INVISIBLE = 'dialog--invisible';
+
   var tokyoElement = document.querySelector('.tokyo');
+  var dialogTemplate = document.querySelector('#dialog-template');
+  var dialogElement = dialogTemplate.content.querySelector('.dialog');
+  var dialogClone = dialogElement.cloneNode(true);
+  var dialogCloseElement = dialogClone.querySelector('.dialog__close');
+  var offerTitleElement = dialogClone.querySelector('.lodge__title');
+  var offerAddressElement = dialogClone.querySelector('.lodge__address');
+  var offerPriceElement = dialogClone.querySelector('.lodge__price');
+  var offerTypeElement = dialogClone.querySelector('.lodge__type');
+  var offerRoomsAndGuestsElement = dialogClone.querySelector('.lodge__rooms-and-guests');
+  var offerCheckinTimeElement = dialogClone.querySelector('.lodge__checkin-time');
+  var offerDescriptionElement = dialogClone.querySelector('.lodge__description');
+  var offerPhotosElement = dialogClone.querySelector('.lodge__photos');
+  var offerFeaturesElement = dialogClone.querySelector('.lodge__features');
+  var cb;
+
+  function fillDialog(data) {
+    offerPhotosElement.innerHTML = '';
+    offerFeaturesElement.innerHTML = '';
+    offerTitleElement.innerText = data.offer.title;
+    offerAddressElement.innerText = data.offer.address;
+    offerPriceElement.innerText = data.offer.price + ' ₽/ночь';
+    offerTypeElement.innerText = data.offer.type;
+    offerRoomsAndGuestsElement.innerText = data.offer.rooms + ' комнаты для ' + data.offer.guests + ' гостей';
+    offerCheckinTimeElement.innerText = 'Заезд после ' + data.offer.checkin + ', выезд до ' + data.offer.checkout;
+    offerDescriptionElement.innerText = data.offer.description;
+
+    data.offer.features.forEach(function (item) {
+      var featureElement = document.createElement('span');
+
+      featureElement.classList.add('feature__image');
+      featureElement.classList.add('feature__image--' + item);
+      offerFeaturesElement.appendChild(featureElement);
+    });
+
+    data.offer.photos.forEach(function (item) {
+      var image = new Image(52, 42);
+      image.src = item;
+      offerPhotosElement.appendChild(image);
+    });
+
+    tokyoElement.appendChild(dialogClone);
+  }
+
+  /**
+   * Закрывает диалог
+   */
+  function closeDialog() {
+    removeDialogHanldlers();
+    toggleVisibility(false);
+    if (cb) {
+      cb();
+    }
+  }
+
+  /**
+   * Показывает / скрывает диалог
+   *
+   * @param {boolean} flag
+   */
+  function toggleVisibility(flag) {
+    dialogClone.classList.toggle(DIALOG_INVISIBLE, !flag);
+    dialogClone.setAttribute('aria-hidden', !flag);
+  }
+
+  /**
+   * Обработчик клика для dialogCloseElement
+   *
+   * @param {KeyboardEvent} event
+   */
+  function dialogCloseClickHandler(event) {
+    event.preventDefault();
+    closeDialog();
+  }
+
+  /**
+   * Обработчик нажатия клавиши для document
+   *
+   * @param {KeyboardEvent} event
+   */
+  function dialogKeydownHandler(event) {
+    if (event.keyCode === utils.KeyCodes.ESC) {
+      closeDialog();
+    }
+  }
+
+  /**
+   * Удаляет обработчики диалога
+   */
+  function removeDialogHanldlers() {
+    document.removeEventListener('keydown', dialogKeydownHandler);
+    dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
+  }
 
   /**
    * Показывает диалог
@@ -12,101 +106,9 @@ window.showCard = (function () {
    * @param {Array} data
    */
   return function (callback, data) {
-    console.log(data);
-    var templateElement = document.querySelector('#dialog-template');
-    var elementToClone = templateElement.content.querySelector('.dialog');
-    var newElement = elementToClone.cloneNode(true);
-
-    tokyoElement.appendChild(newElement);
-
-    var DIALOG_INVISIBLE = 'dialog--invisible';
-    var dialogElement = document.querySelector('.dialog');
-    var dialogCloseElement = dialogElement.querySelector('.dialog__close');
-    var dialogLodgeTitleElement = dialogElement.querySelector('.lodge__title');
-    var dialogLodgeAddressElement = dialogElement.querySelector('.lodge__address');
-    var dialogLodgeDescElement = dialogElement.querySelector('.lodge__description');
-    var dialogLodgePhotosElement = dialogElement.querySelector('.lodge__photos');
-    var dialogLodgePriceElement = dialogElement.querySelector('.lodge__price');
-    // var dialogLodgeTypeElement = dialogElement.querySelector('.lodge__flat');
-    // var dialogLodgeRoomsElement = dialogElement.querySelector('.lodge__rooms');
-    // var dialogLodgeGuestsElement = dialogElement.querySelector('.lodge__guests');
-    // var dialogLodgeCheckInElement = dialogElement.querySelector('.lodge__checkin-time');
-    var cb;
-
-    /**
-     * Закрывает диалог
-     */
-    function closeDialog() {
-      removeDialogHanldlers();
-      toggleVisibility(false);
-      if (cb) {
-        cb();
-      }
-    }
-
-    /**
-     * Показывает / скрывает диалог
-     *
-     * @param {boolean} flag
-     */
-    function toggleVisibility(flag) {
-      dialogElement.classList.toggle(DIALOG_INVISIBLE, !flag);
-      dialogElement.setAttribute('aria-hidden', !flag);
-    }
-
-    /**
-     * Обработчик клика для dialogCloseElement
-     *
-     * @param {KeyboardEvent} event
-     */
-    function dialogCloseClickHandler(event) {
-      event.preventDefault();
-      closeDialog();
-    }
-
-    /**
-     * Обработчик нажатия клавиши для document
-     *
-     * @param {KeyboardEvent} event
-     */
-    function dialogKeydownHandler(event) {
-      if (event.keyCode === utils.KeyCodes.ESC) {
-        closeDialog();
-      }
-    }
-
-    /**
-     * Удаляет обработчики диалога
-     */
-    function removeDialogHanldlers() {
-      document.removeEventListener('keydown', dialogKeydownHandler);
-      dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
-    }
-
-    dialogLodgePhotosElement.innerHTML = '';
-    dialogLodgeTitleElement.textContent = data.offer.title;
-    dialogLodgeAddressElement.textContent = data.offer.address;
-    dialogLodgeDescElement.textContent = data.offer.description;
-    dialogLodgeDescElement.textContent = data.offer.description;
-    dialogLodgePriceElement.textContent = data.offer.price;
-    // dialogLodgeTypeElement.textContent = data.offer.type;
-    // dialogLodgeRoomsElement.textContent = data.offer.rooms;
-    // dialogLodgeGuestsElement.textContent = data.offer.guests;
-    // dialogLodgeCheckInElement.textContent = data.offer.checkin;
-    // dialogLodgeCheckOutElement.textContent = data.offer.checkout;
-
-    data.offer.features.forEach(function (element) {
-
-    });
-
-    data.offer.photos.forEach(function (element) {
-      var image = new Image(52, 42);
-      image.src = element;
-      dialogLodgePhotosElement.appendChild(image);
-    });
-
     cb = utils.isFunction(callback) ? callback : null;
 
+    fillDialog(data);
     toggleVisibility(true);
 
     document.addEventListener('keydown', dialogKeydownHandler);

@@ -7,6 +7,8 @@
   var utils = window.utils;
   var showCard = window.showCard;
   var load = window.load;
+  // var renderDialog = window.renderDialog;
+  var renderPin = window.renderPin;
 
   var ClassNames = {
     PIN: 'pin',
@@ -19,8 +21,6 @@
   var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
   var similarApartments = [];
-  var templateElement = document.querySelector('#pin-template');
-  var elementToClone = templateElement.content.querySelector('.pin');
 
   /**
    * Устанавливает атрибуты aria-pressed
@@ -96,23 +96,21 @@
 
   initPinAriaPressedAttr();
 
-  function renderPins(data) {
+  load(DATA_URL, function (data) {
     similarApartments = data;
     var similarApartmentsToRender = similarApartments.slice(0, 3);
-    var newElement;
+    var fragment = document.createDocumentFragment();
 
-    similarApartmentsToRender.forEach(function (element, index) {
-      newElement = elementToClone.cloneNode(true);
-      var imageElement = newElement.querySelector('img');
-      imageElement.src = element.author.avatar;
-      newElement.setAttribute('data-key', index);
-      newElement.style.left = element.location.x + 'px';
-      newElement.style.top = element.location.y + 'px';
-      pinMapElement.appendChild(newElement);
+    similarApartmentsToRender.forEach(function (item, index) {
+      var newPinElement = renderPin(item, index);
+      fragment.appendChild(newPinElement);
+      // newPinElement.addEventListener('click', function () {
+      //   renderDialog(item);
+      // });
     });
-  }
 
-  load(DATA_URL, renderPins);
+    pinMapElement.appendChild(fragment);
+  });
 
   pinMapElement.addEventListener('click', pinMapHandler);
   pinMapElement.addEventListener('keydown', pinMapHandler);
