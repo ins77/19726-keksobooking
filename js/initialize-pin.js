@@ -91,16 +91,25 @@
     }
 
     setActivePin(closestPinElement);
-    load(DATA_URL, function (data) {
-      var imgPath = selectedPinElement.querySelector('img');
 
-      for (var i = 0; i < data.length; i++) {
-        if (data[i].author.avatar === imgPath.getAttribute('src')) {
-          showCard(cb, data[i]);
-          return;
-        }
+    var imgPath = selectedPinElement.querySelector('img');
+    for (var i = 0; i < similarApartments.length; i++) {
+      if (similarApartments[i].author.avatar === imgPath.getAttribute('src')) {
+        showCard(cb, similarApartments[i]);
+        return;
       }
-    });
+    }
+    // showCard(cb, similarApartments);
+    // load(DATA_URL, function (data) {
+    //   var imgPath = selectedPinElement.querySelector('img');
+    //
+    //   for (var i = 0; i < data.length; i++) {
+    //     if (data[i].author.avatar === imgPath.getAttribute('src')) {
+    //       showCard(cb, data[i]);
+    //       return;
+    //     }
+    //   }
+    // });
   }
 
   initPinAriaPressedAttr();
@@ -112,8 +121,8 @@
 
     similarApartmentsToRender.forEach(function (element) {
       newElement = elementToClone.cloneNode(true);
-      var image = newElement.querySelector('img');
-      image.src = element.author.avatar;
+      var imageElement = newElement.querySelector('img');
+      imageElement.src = element.author.avatar;
       newElement.style.left = element.location.x + 'px';
       newElement.style.top = element.location.y + 'px';
       pinMapElement.appendChild(newElement);

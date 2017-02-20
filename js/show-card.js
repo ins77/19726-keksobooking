@@ -12,6 +12,7 @@ window.showCard = (function () {
    * @param {Array} data
    */
   return function (callback, data) {
+    console.log(data);
     var templateElement = document.querySelector('#dialog-template');
     var elementToClone = templateElement.content.querySelector('.dialog');
     var newElement = elementToClone.cloneNode(true);
@@ -29,7 +30,7 @@ window.showCard = (function () {
     // var dialogLodgeTypeElement = dialogElement.querySelector('.lodge__flat');
     // var dialogLodgeRoomsElement = dialogElement.querySelector('.lodge__rooms');
     // var dialogLodgeGuestsElement = dialogElement.querySelector('.lodge__guests');
-    var dialogLodgeCheckInElement = dialogElement.querySelector('.lodge__checkin-time');
+    // var dialogLodgeCheckInElement = dialogElement.querySelector('.lodge__checkin-time');
     var cb;
 
     /**
