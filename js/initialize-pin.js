@@ -91,25 +91,7 @@
     }
 
     setActivePin(closestPinElement);
-
-    var imgPath = selectedPinElement.querySelector('img');
-    for (var i = 0; i < similarApartments.length; i++) {
-      if (similarApartments[i].author.avatar === imgPath.getAttribute('src')) {
-        showCard(cb, similarApartments[i]);
-        return;
-      }
-    }
-    // showCard(cb, similarApartments);
-    // load(DATA_URL, function (data) {
-    //   var imgPath = selectedPinElement.querySelector('img');
-    //
-    //   for (var i = 0; i < data.length; i++) {
-    //     if (data[i].author.avatar === imgPath.getAttribute('src')) {
-    //       showCard(cb, data[i]);
-    //       return;
-    //     }
-    //   }
-    // });
+    showCard(cb, similarApartments[selectedPinElement.getAttribute('data-key')]);
   }
 
   initPinAriaPressedAttr();
@@ -119,10 +101,11 @@
     var similarApartmentsToRender = similarApartments.slice(0, 3);
     var newElement;
 
-    similarApartmentsToRender.forEach(function (element) {
+    similarApartmentsToRender.forEach(function (element, index) {
       newElement = elementToClone.cloneNode(true);
       var imageElement = newElement.querySelector('img');
       imageElement.src = element.author.avatar;
+      newElement.setAttribute('data-key', index);
       newElement.style.left = element.location.x + 'px';
       newElement.style.top = element.location.y + 'px';
       pinMapElement.appendChild(newElement);
