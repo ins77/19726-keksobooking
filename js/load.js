@@ -3,7 +3,7 @@
 window.load = (function () {
 
   var errorHandler = function (err) {
-    console.log(err);
+    return err;
   };
 
   /**

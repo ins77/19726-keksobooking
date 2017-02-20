@@ -18,6 +18,9 @@
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
+  var similarApartments = [];
+  var templateElement = document.querySelector('#pin-template');
+  var elementToClone = templateElement.content.querySelector('.pin');
 
   /**
    * Устанавливает атрибуты aria-pressed
@@ -63,6 +66,7 @@
    * Обработчик событий для pinMap
    *
    * @param {KeyboardEvent} event
+   * @param {Array} data
    */
   function pinMapHandler(event) {
     if (!utils.isActivateEvent(event)) {
@@ -87,21 +91,22 @@
     }
 
     setActivePin(closestPinElement);
-    showCard(cb);
+    load(DATA_URL, function (data) {
+      var imgPath = selectedPinElement.querySelector('img');
+
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].author.avatar === imgPath.getAttribute('src')) {
+          showCard(cb, data[i]);
+          return;
+        }
+      }
+    });
   }
 
   initPinAriaPressedAttr();
 
   function renderPins(data) {
-    var similarApartments = [];
-    var fragment = document.createDocumentFragment();
-
-    data.forEach(function (element) {
-      similarApartments.push(element);
-    });
-
-    var templateElement = document.querySelector('#pin-template');
-    var elementToClone = templateElement.content.querySelector('.pin');
+    similarApartments = data;
     var similarApartmentsToRender = similarApartments.slice(0, 3);
     var newElement;
 
@@ -111,7 +116,7 @@
       image.src = element.author.avatar;
       newElement.style.left = element.location.x + 'px';
       newElement.style.top = element.location.y + 'px';
-      fragment.appendChild(newElement);
+      pinMapElement.appendChild(newElement);
     });
   }
 
@@ -119,10 +124,4 @@
 
   pinMapElement.addEventListener('click', pinMapHandler);
   pinMapElement.addEventListener('keydown', pinMapHandler);
-
-
-  // newElement.addEventListener('click', function () {
-  //
-  // });
-
 })();
