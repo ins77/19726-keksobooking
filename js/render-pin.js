@@ -10,8 +10,6 @@ window.renderPin = (function () {
 
     pinClone.setAttribute('data-key', index);
     pinAvatar.src = data.author.avatar;
-    pinClone.style.left = data.location.x + 'px';
-    pinClone.style.top = data.location.y + 'px';
 
     return pinClone;
   };

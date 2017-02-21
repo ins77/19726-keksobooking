@@ -7,7 +7,6 @@
   var utils = window.utils;
   var showCard = window.showCard;
   var load = window.load;
-  // var renderDialog = window.renderDialog;
   var renderPin = window.renderPin;
 
   var ClassNames = {
@@ -18,18 +17,8 @@
   var DATA_URL = 'https://intensive-javascript-server-pedmyactpq.now.sh/keksobooking/data';
 
   var pinMapElement = document.querySelector('.tokyo__pin-map');
-  var pinBtnElements = pinMapElement.querySelectorAll('.pin [role="button"]');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
   var similarApartments = [];
-
-  /**
-   * Устанавливает атрибуты aria-pressed
-   */
-  function initPinAriaPressedAttr() {
-    Array.prototype.forEach.call(pinBtnElements, function (el) {
-      el.setAttribute('aria-pressed', false);
-    });
-  }
 
   function selectPin(pinElement, flag) {
     pinElement.classList.toggle(ClassNames.PIN_ACTIVE, flag);
@@ -94,8 +83,6 @@
     showCard(cb, similarApartments[selectedPinElement.getAttribute('data-key')]);
   }
 
-  initPinAriaPressedAttr();
-
   load(DATA_URL, function (data) {
     similarApartments = data;
     var similarApartmentsToRender = similarApartments.slice(0, 3);
@@ -103,12 +90,23 @@
 
     similarApartmentsToRender.forEach(function (item, index) {
       var newPinElement = renderPin(item, index);
+
+
+      newPinElement.addEventListener('click', pinMapHandler);
+      newPinElement.addEventListener('keydown', pinMapHandler);
+
       fragment.appendChild(newPinElement);
     });
 
     pinMapElement.appendChild(fragment);
+
+    similarApartmentsToRender.forEach(function (item, index) {
+      var pinElements = pinMapElement.querySelectorAll('.pin');
+      Array.prototype.forEach.call(pinElements, function (element) {
+        element.style.left = item.location.x - element.offsetWidth / 2 + 'px';
+        element.style.top = item.location.y - element.offsetHeight + 'px';
+      });
+    });
   });
 
-  pinMapElement.addEventListener('click', pinMapHandler);
-  pinMapElement.addEventListener('keydown', pinMapHandler);
 })();

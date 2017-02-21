@@ -3,20 +3,22 @@
 window.renderDialog = (function () {
 
   var dialogTemplate = document.querySelector('#dialog-template');
+  var dialogElement = dialogTemplate.content.querySelector('.dialog');
+  var dialogClone = dialogElement.cloneNode(true);
+  var dialogTitleElement = dialogClone.querySelector('.dialog__title');
+  var dialogAvatarElement = dialogTitleElement.querySelector('img');
+  var offerTitleElement = dialogClone.querySelector('.lodge__title');
+  var offerAddressElement = dialogClone.querySelector('.lodge__address');
+  var offerPriceElement = dialogClone.querySelector('.lodge__price');
+  var offerTypeElement = dialogClone.querySelector('.lodge__type');
+  var offerRoomsAndGuestsElement = dialogClone.querySelector('.lodge__rooms-and-guests');
+  var offerCheckinTimeElement = dialogClone.querySelector('.lodge__checkin-time');
+  var offerDescriptionElement = dialogClone.querySelector('.lodge__description');
+  var offerPhotosElement = dialogClone.querySelector('.lodge__photos');
+  var offerFeaturesElement = dialogClone.querySelector('.lodge__features');
 
   return function (data) {
-    var dialogElement = dialogTemplate.content.querySelector('.dialog');
-    var dialogClone = dialogElement.cloneNode(true);
-    var offerTitleElement = dialogClone.querySelector('.lodge__title');
-    var offerAddressElement = dialogClone.querySelector('.lodge__address');
-    var offerPriceElement = dialogClone.querySelector('.lodge__price');
-    var offerTypeElement = dialogClone.querySelector('.lodge__type');
-    var offerRoomsAndGuestsElement = dialogClone.querySelector('.lodge__rooms-and-guests');
-    var offerCheckinTimeElement = dialogClone.querySelector('.lodge__checkin-time');
-    var offerDescriptionElement = dialogClone.querySelector('.lodge__description');
-    var offerPhotosElement = dialogClone.querySelector('.lodge__photos');
-    var offerFeaturesElement = dialogClone.querySelector('.lodge__features');
-
+    dialogAvatarElement.src = data.author.avatar;
     offerPhotosElement.innerHTML = '';
     offerFeaturesElement.innerHTML = '';
     offerTitleElement.innerText = data.offer.title;

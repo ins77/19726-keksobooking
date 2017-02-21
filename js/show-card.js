@@ -13,7 +13,7 @@ window.showCard = (function () {
    */
   function closeDialog() {
     removeDialogEventListeners(currentElement);
-    currentElement.remove();
+    currentElement.parentElement.removeChild(currentElement);
     currentElement = null;
     if (cb) {
       cb();
@@ -35,7 +35,7 @@ window.showCard = (function () {
    *
    * @param {KeyboardEvent} event
    */
-  function dialogKeydownHandler(event) {
+  function dialogCloseKeydownHandler(event) {
     if (event.keyCode === utils.KeyCodes.ESC) {
       closeDialog();
     }
@@ -47,7 +47,7 @@ window.showCard = (function () {
    * @param {Element} element
    */
   function removeDialogEventListeners(element) {
-    document.removeEventListener('keydown', dialogKeydownHandler);
+    document.removeEventListener('keydown', dialogCloseKeydownHandler);
     element.removeEventListener('click', dialogCloseClickHandler);
   }
 
@@ -57,7 +57,7 @@ window.showCard = (function () {
    * @param {Element} element
    */
   function addDialogEventListeners(element) {
-    document.addEventListener('keydown', dialogKeydownHandler);
+    document.addEventListener('keydown', dialogCloseKeydownHandler);
     element.addEventListener('click', dialogCloseClickHandler);
   }
 
@@ -68,19 +68,20 @@ window.showCard = (function () {
    * @param {Array} data
    */
   return function (callback, data) {
-    var newElement = renderDialog(data);
+    var newDialogElement = renderDialog(data);
+    var DialogCloseElement = newDialogElement.querySelector('.dialog__close');
 
     cb = utils.isFunction(callback) ? callback : null;
 
     if (currentElement) {
-      removeDialogEventListeners(currentElement);
-      utils.replaceDOM(currentElement, newElement);
+      removeDialogEventListeners(currentElement.querySelector('.dialog__close'));
+      utils.replaceDOM(currentElement, newDialogElement);
     } else {
-      tokyoElement.appendChild(newElement);
+      tokyoElement.appendChild(newDialogElement);
     }
 
-    addDialogEventListeners(newElement);
+    addDialogEventListeners(DialogCloseElement);
 
-    currentElement = newElement;
+    currentElement = newDialogElement;
   };
 })();

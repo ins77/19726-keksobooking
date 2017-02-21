@@ -31,7 +31,7 @@ window.utils = (function () {
    * Проверяет нужная ли клавиша нажата
    *
    * @param {KeyboardEvent} event
-   * @return {Boolean}
+   * @return {boolean}
    */
   function isActivateEvent(event) {
     return event.keyCode === window.utils.KeyCodes.ENTER || event.type === 'click';
