@@ -37,6 +37,16 @@ window.utils = (function () {
     return event.keyCode === window.utils.KeyCodes.ENTER || event.type === 'click';
   }
 
+  /**
+   * Заменяет один элемент другим
+   *
+   * @param {Element} currentElement
+   * @param {Element} newElement
+   */
+  function replaceDOM(currentElement, newElement) {
+    currentElement.parentElement.replaceChild(newElement, currentElement);
+  }
+
   function isFunction(arg) {
     return typeof arg === 'function';
   }
@@ -45,6 +55,7 @@ window.utils = (function () {
     KeyCodes: KeyCodes,
     getClosestElement: getClosestElement,
     isActivateEvent: isActivateEvent,
-    isFunction: isFunction
+    isFunction: isFunction,
+    replaceDOM: replaceDOM
   };
 }());

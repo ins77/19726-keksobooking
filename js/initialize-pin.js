@@ -104,9 +104,6 @@
     similarApartmentsToRender.forEach(function (item, index) {
       var newPinElement = renderPin(item, index);
       fragment.appendChild(newPinElement);
-      // newPinElement.addEventListener('click', function () {
-      //   renderDialog(item);
-      // });
     });
 
     pinMapElement.appendChild(fragment);
