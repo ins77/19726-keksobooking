@@ -59,43 +59,32 @@
     selectedPinElement = null;
   }
 
-  /**
-   * Обработчик событий для pinMap
-   *
-   * @param {KeyboardEvent} event
-   * @param {Array} data
-   */
-  function pinMapHandler(event) {
-    if (!utils.isActivateEvent(event)) {
-      return;
-    }
-
-    var target = event.target;
-    var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
-
-    if (!closestPinElement) {
-      return;
-    }
-
-    setActivePin(closestPinElement);
-  }
-
   load(DATA_URL, function (data) {
     similarApartments = data;
     var similarApartmentsToRender = similarApartments.slice(0, 3);
     var fragment = document.createDocumentFragment();
 
-    similarApartmentsToRender.forEach(function (item) {
-      var newPinElement = renderPin(item);
+    similarApartmentsToRender.forEach(function (apartment) {
+      var newPinElement = renderPin(apartment);
 
-      newPinElement.style.left = item.location.x - PIN_WIDTH / 2 + 'px';
-      newPinElement.style.top = item.location.y - PIN_HEIGHT + 'px';
+      newPinElement.style.left = apartment.location.x - PIN_WIDTH / 2 + 'px';
+      newPinElement.style.top = apartment.location.y - PIN_HEIGHT + 'px';
 
-      newPinElement.addEventListener('click', function () {
-        showCard(item, removeSelectedPin);
+      newPinElement.addEventListener('click', function (event) {
+        var closestPinElement = utils.getClosestElement(event.target, '.' + ClassNames.PIN);
+
+        setActivePin(closestPinElement);
+        showCard(apartment, removeSelectedPin);
       });
-      newPinElement.addEventListener('keydown', function () {
-        showCard(item, function () {
+      newPinElement.addEventListener('keydown', function (event) {
+        if (event.keyCode !== window.utils.KeyCodes.ENTER) {
+          return;
+        }
+
+        var closestPinElement = utils.getClosestElement(event.target, '.' + ClassNames.PIN);
+
+        setActivePin(closestPinElement);
+        showCard(apartment, function () {
           selectedPinElement.querySelector('[role="button"]').focus();
           removeSelectedPin();
         });
@@ -106,7 +95,4 @@
 
     pinMapElement.appendChild(fragment);
   });
-
-  pinMapElement.addEventListener('click', pinMapHandler);
-  pinMapElement.addEventListener('keydown', pinMapHandler);
 })();

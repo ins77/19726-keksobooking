@@ -69,7 +69,6 @@ window.showCard = (function () {
    */
   return function (data, callback) {
     var newDialogElement = renderDialog(data);
-    var DialogCloseElement = newDialogElement.querySelector('.dialog__close');
 
     cb = utils.isFunction(callback) ? callback : null;
 
@@ -80,7 +79,7 @@ window.showCard = (function () {
       tokyoElement.appendChild(newDialogElement);
     }
 
-    addDialogEventListeners(DialogCloseElement);
+    addDialogEventListeners(newDialogElement.querySelector('.dialog__close'));
 
     currentElement = newDialogElement;
   };
