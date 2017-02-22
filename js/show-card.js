@@ -35,7 +35,7 @@ window.showCard = (function () {
    *
    * @param {KeyboardEvent} event
    */
-  function dialogCloseKeydownHandler(event) {
+  function documentKeydownHandler(event) {
     if (event.keyCode === utils.KeyCodes.ESC) {
       closeDialog();
     }
@@ -47,7 +47,7 @@ window.showCard = (function () {
    * @param {Element} element
    */
   function removeDialogEventListeners(element) {
-    document.removeEventListener('keydown', dialogCloseKeydownHandler);
+    document.removeEventListener('keydown', documentKeydownHandler);
     element.removeEventListener('click', dialogCloseClickHandler);
   }
 
@@ -57,17 +57,17 @@ window.showCard = (function () {
    * @param {Element} element
    */
   function addDialogEventListeners(element) {
-    document.addEventListener('keydown', dialogCloseKeydownHandler);
+    document.addEventListener('keydown', documentKeydownHandler);
     element.addEventListener('click', dialogCloseClickHandler);
   }
 
   /**
    * Показывает диалог
    *
-   * @param {Function} callback
    * @param {Array} data
+   * @param {Function} callback
    */
-  return function (callback, data) {
+  return function (data, callback) {
     var newDialogElement = renderDialog(data);
     var DialogCloseElement = newDialogElement.querySelector('.dialog__close');
 

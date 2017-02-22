@@ -14,12 +14,20 @@
     PIN_ACTIVE: 'pin--active',
   };
 
+  var PIN_WIDTH = 56;
+  var PIN_HEIGHT = 75;
   var DATA_URL = 'https://intensive-javascript-server-pedmyactpq.now.sh/keksobooking/data';
 
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
   var similarApartments = [];
 
+  /**
+   * Выделяет / снимает выделение с пина (pinElement), в зависимости от значения flag
+   *
+   * @param {Element} pinElement
+   * @param {boolean} flag
+   */
   function selectPin(pinElement, flag) {
     pinElement.classList.toggle(ClassNames.PIN_ACTIVE, flag);
     pinElement.querySelector('[role="button"]').setAttribute('aria-pressed', flag);
@@ -64,23 +72,12 @@
 
     var target = event.target;
     var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
-    var cb;
 
     if (!closestPinElement) {
       return;
     }
 
-    if (event.type === 'click') {
-      cb = removeSelectedPin;
-    } else {
-      cb = function () {
-        selectedPinElement.querySelector('[role="button"]').focus();
-        removeSelectedPin();
-      };
-    }
-
     setActivePin(closestPinElement);
-    showCard(cb, similarApartments[selectedPinElement.getAttribute('data-key')]);
   }
 
   load(DATA_URL, function (data) {
@@ -88,25 +85,28 @@
     var similarApartmentsToRender = similarApartments.slice(0, 3);
     var fragment = document.createDocumentFragment();
 
-    similarApartmentsToRender.forEach(function (item, index) {
-      var newPinElement = renderPin(item, index);
+    similarApartmentsToRender.forEach(function (item) {
+      var newPinElement = renderPin(item);
 
+      newPinElement.style.left = item.location.x - PIN_WIDTH / 2 + 'px';
+      newPinElement.style.top = item.location.y - PIN_HEIGHT + 'px';
 
-      newPinElement.addEventListener('click', pinMapHandler);
-      newPinElement.addEventListener('keydown', pinMapHandler);
+      newPinElement.addEventListener('click', function () {
+        showCard(item, removeSelectedPin);
+      });
+      newPinElement.addEventListener('keydown', function () {
+        showCard(item, function () {
+          selectedPinElement.querySelector('[role="button"]').focus();
+          removeSelectedPin();
+        });
+      });
 
       fragment.appendChild(newPinElement);
     });
 
     pinMapElement.appendChild(fragment);
-
-    similarApartmentsToRender.forEach(function (item, index) {
-      var pinElements = pinMapElement.querySelectorAll('.pin');
-      Array.prototype.forEach.call(pinElements, function (element) {
-        element.style.left = item.location.x - element.offsetWidth / 2 + 'px';
-        element.style.top = item.location.y - element.offsetHeight + 'px';
-      });
-    });
   });
 
+  pinMapElement.addEventListener('click', pinMapHandler);
+  pinMapElement.addEventListener('keydown', pinMapHandler);
 })();

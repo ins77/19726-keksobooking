@@ -17,6 +17,12 @@ window.renderDialog = (function () {
   var offerPhotosElement = dialogClone.querySelector('.lodge__photos');
   var offerFeaturesElement = dialogClone.querySelector('.lodge__features');
 
+  /**
+   * Рендерит и возвращает диалог, заполненный данными из объекта data
+   *
+   * @param {Object} data
+   * @return {Element} dialogClone
+   */
   return function (data) {
     dialogAvatarElement.src = data.author.avatar;
     offerPhotosElement.innerHTML = '';

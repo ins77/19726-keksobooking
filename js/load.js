@@ -3,7 +3,7 @@
 window.load = (function () {
 
   /**
-   * Синхронизирует поля firstField и secondField. Выставляет соответствующее значение secondField из массива secondFieldValues, в зависимости от позиции значения firstField в массиве firstFieldValues
+   * Отправляет запрос по адресу url и если нет ошибок, выполняет функцию onLoad
    *
    * @param {string} url
    * @param {Function} onLoad

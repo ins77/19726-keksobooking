@@ -4,11 +4,16 @@ window.renderPin = (function () {
   var pinTemplate = document.querySelector('#pin-template');
   var pinElement = pinTemplate.content.querySelector('.pin');
 
-  return function (data, index) {
+  /**
+   * Рендерит и возвращает пин, заполненный данными из объекта data
+   *
+   * @param {Object} data
+   * @return {Element} pinClone
+   */
+  return function (data) {
     var pinClone = pinElement.cloneNode(true);
     var pinAvatar = pinClone.querySelector('img');
 
-    pinClone.setAttribute('data-key', index);
     pinAvatar.src = data.author.avatar;
 
     return pinClone;
