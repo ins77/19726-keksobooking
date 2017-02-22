@@ -6,13 +6,14 @@ window.showCard = (function () {
 
   var tokyoElement = document.querySelector('.tokyo');
   var currentElement;
+  var closeBtnElement;
   var cb;
 
   /**
    * Закрывает диалог
    */
   function closeDialog() {
-    removeDialogEventListeners(currentElement);
+    removeListeners();
     currentElement.parentElement.removeChild(currentElement);
     currentElement = null;
     if (cb) {
@@ -21,11 +22,11 @@ window.showCard = (function () {
   }
 
   /**
-   * Обработчик клика для dialogCloseElement
+   * Обработчик клика для closeBtnElement
    *
    * @param {KeyboardEvent} event
    */
-  function dialogCloseClickHandler(event) {
+  function closeBtnClickHandler(event) {
     event.preventDefault();
     closeDialog();
   }
@@ -43,22 +44,18 @@ window.showCard = (function () {
 
   /**
    * Удаляет обработчики диалога
-   *
-   * @param {Element} element
    */
-  function removeDialogEventListeners(element) {
+  function removeListeners() {
     document.removeEventListener('keydown', documentKeydownHandler);
-    element.removeEventListener('click', dialogCloseClickHandler);
+    closeBtnElement.removeEventListener('click', closeBtnClickHandler);
   }
 
   /**
    * Добавляет обработчики диалога
-   *
-   * @param {Element} element
    */
-  function addDialogEventListeners(element) {
+  function addListeners() {
     document.addEventListener('keydown', documentKeydownHandler);
-    element.addEventListener('click', dialogCloseClickHandler);
+    closeBtnElement.addEventListener('click', closeBtnClickHandler);
   }
 
   /**
@@ -68,19 +65,21 @@ window.showCard = (function () {
    * @param {Function} callback
    */
   return function (data, callback) {
+    console.log(data);
+    console.log(callback);
     var newDialogElement = renderDialog(data);
 
     cb = utils.isFunction(callback) ? callback : null;
 
     if (currentElement) {
-      removeDialogEventListeners(currentElement.querySelector('.dialog__close'));
+      removeListeners();
       utils.replaceDOM(currentElement, newDialogElement);
     } else {
       tokyoElement.appendChild(newDialogElement);
     }
 
-    addDialogEventListeners(newDialogElement.querySelector('.dialog__close'));
-
     currentElement = newDialogElement;
+    closeBtnElement = currentElement.querySelector('.dialog__close');
+    addListeners();
   };
 })();

@@ -21,6 +21,7 @@
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
   var similarApartments = [];
+  var apartmentItem;
 
   /**
    * Выделяет / снимает выделение с пина (pinElement), в зависимости от значения flag
@@ -59,36 +60,50 @@
     selectedPinElement = null;
   }
 
+  function setPinPosition(pin, apartment) {
+    pin.style.left = apartment.location.x - PIN_WIDTH / 2 + 'px';
+    pin.style.top = apartment.location.y - PIN_HEIGHT + 'px';
+  }
+
+  function newPinHandler(event) {
+    if (!utils.isActivateEvent(event)) {
+      return;
+    }
+
+    var target = event.target;
+    var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
+    var cb;
+
+    if (!closestPinElement) {
+      return;
+    }
+
+    if (event.type === 'click') {
+      cb = removeSelectedPin;
+    } else {
+      cb = function () {
+        selectedPinElement.querySelector('[role="button"]').focus();
+        removeSelectedPin();
+      };
+    }
+
+    setActivePin(closestPinElement);
+    showCard(apartmentItem, cb);
+  }
+
   load(DATA_URL, function (data) {
     similarApartments = data;
     var similarApartmentsToRender = similarApartments.slice(0, 3);
     var fragment = document.createDocumentFragment();
 
     similarApartmentsToRender.forEach(function (apartment) {
+      apartmentItem = apartment;
       var newPinElement = renderPin(apartment);
 
-      newPinElement.style.left = apartment.location.x - PIN_WIDTH / 2 + 'px';
-      newPinElement.style.top = apartment.location.y - PIN_HEIGHT + 'px';
+      setPinPosition(newPinElement, apartment);
 
-      newPinElement.addEventListener('click', function (event) {
-        var closestPinElement = utils.getClosestElement(event.target, '.' + ClassNames.PIN);
-
-        setActivePin(closestPinElement);
-        showCard(apartment, removeSelectedPin);
-      });
-      newPinElement.addEventListener('keydown', function (event) {
-        if (event.keyCode !== window.utils.KeyCodes.ENTER) {
-          return;
-        }
-
-        var closestPinElement = utils.getClosestElement(event.target, '.' + ClassNames.PIN);
-
-        setActivePin(closestPinElement);
-        showCard(apartment, function () {
-          selectedPinElement.querySelector('[role="button"]').focus();
-          removeSelectedPin();
-        });
-      });
+      newPinElement.addEventListener('click', newPinHandler);
+      newPinElement.addEventListener('keydown', newPinHandler);
 
       fragment.appendChild(newPinElement);
     });
