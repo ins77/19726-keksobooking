@@ -17,9 +17,20 @@
   var PIN_WIDTH = 56;
   var PIN_HEIGHT = 75;
   var DATA_URL = 'https://intensive-javascript-server-pedmyactpq.now.sh/keksobooking/data';
+  var FILTER_ANY = 'any';
+  var FILTER_PRICE_LOW = 10000;
+  var FILTER_PRICE_MIDDLE = 50000;
 
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
+  var tokyoElement = document.querySelector('.tokyo');
+  var tokyoPinMapElement = tokyoElement.querySelector('.tokyo__pin-map');
+  var tokyoFiltersForm = tokyoElement.querySelector('.tokyo__filters');
+  var tokyoFilterTypeElement = tokyoFiltersForm.querySelector('#housing_type');
+  var tokyoFilterPriceElement = tokyoFiltersForm.querySelector('#housing_price');
+  var tokyoFilterRoomsElement = tokyoFiltersForm.querySelector('#housing_room-number');
+  var tokyoFilterGuestsElement = tokyoFiltersForm.querySelector('#housing_guests-number');
+  // var tokyoFilterFeatureElements = tokyoFiltersForm.querySelectorAll('input[type="checkbox"]');
   var similarApartments = [];
 
   /**
@@ -103,22 +114,88 @@
     };
   }
 
+  function clearTokyoMap() {
+    var pinElements = tokyoPinMapElement.querySelectorAll('.pin:not(.pin__main)');
+    Array.prototype.forEach.call(pinElements, function (pinElement) {
+      tokyoPinMapElement.removeChild(pinElement);
+    });
+    showCard(false);
+  }
+
+  function checkApartmentType(apartment) {
+    return tokyoFilterTypeElement.value === FILTER_ANY || tokyoFilterTypeElement.value === apartment.offer.type;
+  }
+
+  function checkApartmentPrice(apartment) {
+    switch (tokyoFilterPriceElement.value) {
+      case ('low'):
+        return apartment.offer.price < FILTER_PRICE_LOW;
+      case ('middle'):
+        return apartment.offer.price >= FILTER_PRICE_LOW && apartment.offer.price <= FILTER_PRICE_MIDDLE;
+      case ('hight'):
+        return apartment.offer.price > FILTER_PRICE_MIDDLE;
+      default:
+        return false;
+    }
+  }
+
+  function checkApartmentRooms(apartment) {
+    return tokyoFilterRoomsElement.value === FILTER_ANY || tokyoFilterRoomsElement.value === apartment.offer.rooms.toString();
+  }
+
+  function checkApartmentGuests(apartment) {
+    return tokyoFilterGuestsElement.value === FILTER_ANY || tokyoFilterGuestsElement.value === apartment.offer.guests.toString();
+  }
+
+  // function checkApartmentFeatures(apartment) {
+  //   var apartmentFeatures = apartment.offset.features;
+  //   var featureCheckedElements = Array.prototype.filter.call(tokyoFilterFeatureElements, function (featureElement) {
+  //     return featureElement.checked;
+  //   }).map(function (featureElement) {
+  //     return featureElement.value;
+  //   });
+  //
+  //   var flag = false;
+  //
+  //   featureCheckedElements.forEach(function (featureElement) {
+  //     apartmentFeatures.forEach(function (apartmentFeature) {
+  //       flag = featureElement === apartmentFeature;
+  //     });
+  //   });
+  //
+  //   return flag;
+  // }
+
+  function renderPins(apartmentsToRender) {
+    var fragment = document.createDocumentFragment();
+    apartmentsToRender.forEach(function (apartment) {
+      var newPinElement = renderPin(apartment);
+      setPinPosition(newPinElement, apartment);
+      newPinElement.addEventListener('click', getPinHandler(apartment));
+      newPinElement.addEventListener('keydown', getPinHandler(apartment));
+      fragment.appendChild(newPinElement);
+    });
+    pinMapElement.appendChild(fragment);
+  }
+
   load(DATA_URL, function (data) {
     similarApartments = data;
     var similarApartmentsToRender = similarApartments.slice(0, 3);
-    var fragment = document.createDocumentFragment();
 
-    similarApartmentsToRender.forEach(function (apartment) {
-      var newPinElement = renderPin(apartment);
+    renderPins(similarApartmentsToRender);
+  });
 
-      setPinPosition(newPinElement, apartment);
+  tokyoFiltersForm.addEventListener('change', function () {
+    clearTokyoMap();
 
-      newPinElement.addEventListener('click', getPinHandler(apartment));
-      newPinElement.addEventListener('keydown', getPinHandler(apartment));
-
-      fragment.appendChild(newPinElement);
+    var similarApartmentsToRender = similarApartments.filter(function (apartment) {
+      return checkApartmentType(apartment) &&
+             checkApartmentPrice(apartment) &&
+             checkApartmentRooms(apartment) &&
+             checkApartmentGuests(apartment);
     });
 
-    pinMapElement.appendChild(fragment);
+    renderPins(similarApartmentsToRender);
   });
+
 })();

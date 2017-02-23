@@ -65,6 +65,13 @@ window.showCard = (function () {
    * @param {Function} callback
    */
   return function (data, callback) {
+    if (!data) {
+      if (currentElement) {
+        closeDialog();
+      }
+      return;
+    }
+
     var newDialogElement = renderDialog(data);
 
     cb = utils.isFunction(callback) ? callback : null;
