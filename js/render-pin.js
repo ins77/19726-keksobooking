@@ -8,7 +8,7 @@ window.renderPin = (function () {
    * Рендерит и возвращает пин, заполненный данными из объекта data
    *
    * @param {Object} data
-   * @return {Element} pinClone
+   * @return {Element}
    */
   return function (data) {
     var pinClone = pinElement.cloneNode(true);

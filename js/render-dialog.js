@@ -21,7 +21,7 @@ window.renderDialog = (function () {
    * Рендерит и возвращает диалог, заполненный данными из объекта data
    *
    * @param {Object} data
-   * @return {Element} dialogClone
+   * @return {Element}
    */
   return function (data) {
     dialogAvatarElement.src = data.author.avatar;
