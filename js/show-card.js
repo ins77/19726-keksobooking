@@ -2,40 +2,31 @@
 
 window.showCard = (function () {
   var utils = window.utils;
+  var renderDialog = window.renderDialog;
 
-  var DIALOG_INVISIBLE = 'dialog--invisible';
-
-  var dialogElement = document.querySelector('.dialog');
-  var dialogCloseElement = dialogElement.querySelector('.dialog__close');
+  var tokyoElement = document.querySelector('.tokyo');
+  var currentElement;
+  var closeBtnElement;
   var cb;
 
   /**
    * Закрывает диалог
    */
   function closeDialog() {
-    removeDialogHanldlers();
-    toggleVisibility(false);
+    removeListeners();
+    currentElement.parentElement.removeChild(currentElement);
+    currentElement = null;
     if (cb) {
       cb();
     }
   }
 
   /**
-   * Показывает / скрывает диалог
-   *
-   * @param {boolean} flag
-   */
-  function toggleVisibility(flag) {
-    dialogElement.classList.toggle(DIALOG_INVISIBLE, !flag);
-    dialogElement.setAttribute('aria-hidden', !flag);
-  }
-
-  /**
-   * Обработчик клика для dialogCloseElement
+   * Обработчик клика для closeBtnElement
    *
    * @param {KeyboardEvent} event
    */
-  function dialogCloseClickHandler(event) {
+  function closeBtnClickHandler(event) {
     event.preventDefault();
     closeDialog();
   }
@@ -45,7 +36,7 @@ window.showCard = (function () {
    *
    * @param {KeyboardEvent} event
    */
-  function dialogKeydownHandler(event) {
+  function documentKeydownHandler(event) {
     if (event.keyCode === utils.KeyCodes.ESC) {
       closeDialog();
     }
@@ -54,22 +45,39 @@ window.showCard = (function () {
   /**
    * Удаляет обработчики диалога
    */
-  function removeDialogHanldlers() {
-    document.removeEventListener('keydown', dialogKeydownHandler);
-    dialogCloseElement.removeEventListener('click', dialogCloseClickHandler);
+  function removeListeners() {
+    document.removeEventListener('keydown', documentKeydownHandler);
+    closeBtnElement.removeEventListener('click', closeBtnClickHandler);
+  }
+
+  /**
+   * Добавляет обработчики диалога
+   */
+  function addListeners() {
+    document.addEventListener('keydown', documentKeydownHandler);
+    closeBtnElement.addEventListener('click', closeBtnClickHandler);
   }
 
   /**
    * Показывает диалог
    *
+   * @param {Array} data
    * @param {Function} callback
    */
-  return function (callback) {
+  return function (data, callback) {
+    var newDialogElement = renderDialog(data);
+
     cb = utils.isFunction(callback) ? callback : null;
 
-    toggleVisibility(true);
+    if (currentElement) {
+      removeListeners();
+      utils.replaceDOM(currentElement, newDialogElement);
+    } else {
+      tokyoElement.appendChild(newDialogElement);
+    }
 
-    document.addEventListener('keydown', dialogKeydownHandler);
-    dialogCloseElement.addEventListener('click', dialogCloseClickHandler);
+    currentElement = newDialogElement;
+    closeBtnElement = currentElement.querySelector('.dialog__close');
+    addListeners();
   };
 })();

@@ -31,10 +31,20 @@ window.utils = (function () {
    * Проверяет нужная ли клавиша нажата
    *
    * @param {KeyboardEvent} event
-   * @return {Boolean}
+   * @return {boolean}
    */
   function isActivateEvent(event) {
     return event.keyCode === window.utils.KeyCodes.ENTER || event.type === 'click';
+  }
+
+  /**
+   * Заменяет один элемент другим
+   *
+   * @param {Element} currentElement
+   * @param {Element} newElement
+   */
+  function replaceDOM(currentElement, newElement) {
+    currentElement.parentElement.replaceChild(newElement, currentElement);
   }
 
   function isFunction(arg) {
@@ -45,6 +55,7 @@ window.utils = (function () {
     KeyCodes: KeyCodes,
     getClosestElement: getClosestElement,
     isActivateEvent: isActivateEvent,
-    isFunction: isFunction
+    isFunction: isFunction,
+    replaceDOM: replaceDOM
   };
 }());

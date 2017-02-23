@@ -1,6 +1,7 @@
 'use strict';
 
 window.synchronizeFields = (function () {
+
   /**
    * Синхронизирует поля firstField и secondField. Выставляет соответствующее значение secondField из массива secondFieldValues, в зависимости от позиции значения firstField в массиве firstFieldValues
    *
