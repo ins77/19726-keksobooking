@@ -21,7 +21,6 @@
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
   var similarApartments = [];
-  var apartmentItem;
 
   /**
    * Выделяет / снимает выделение с пина (pinElement), в зависимости от значения flag
@@ -60,35 +59,48 @@
     selectedPinElement = null;
   }
 
-  function setPinPosition(pin, apartment) {
-    pin.style.left = apartment.location.x - PIN_WIDTH / 2 + 'px';
-    pin.style.top = apartment.location.y - PIN_HEIGHT + 'px';
+  /**
+   * Устанавливает позицию пина
+   *
+   * @param {Element} pin
+   * @param {Object} pinData
+   */
+  function setPinPosition(pin, pinData) {
+    pin.style.left = pinData.location.x - PIN_WIDTH / 2 + 'px';
+    pin.style.top = pinData.location.y - PIN_HEIGHT + 'px';
   }
 
-  function newPinHandler(event) {
-    if (!utils.isActivateEvent(event)) {
-      return;
-    }
+  function getPinHandler(pinData) {
+    /**
+     * Обработчик для пина
+     *
+     * @param {Event} event
+     */
+    return function (event) {
+      if (!utils.isActivateEvent(event)) {
+        return;
+      }
 
-    var target = event.target;
-    var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
-    var cb;
+      var target = event.target;
+      var closestPinElement = utils.getClosestElement(target, '.' + ClassNames.PIN);
+      var cb;
 
-    if (!closestPinElement) {
-      return;
-    }
+      if (!closestPinElement) {
+        return;
+      }
 
-    if (event.type === 'click') {
-      cb = removeSelectedPin;
-    } else {
-      cb = function () {
-        selectedPinElement.querySelector('[role="button"]').focus();
-        removeSelectedPin();
-      };
-    }
+      if (event.type === 'click') {
+        cb = removeSelectedPin;
+      } else {
+        cb = function () {
+          selectedPinElement.querySelector('[role="button"]').focus();
+          removeSelectedPin();
+        };
+      }
 
-    setActivePin(closestPinElement);
-    showCard(apartmentItem, cb);
+      setActivePin(closestPinElement);
+      showCard(pinData, cb);
+    };
   }
 
   load(DATA_URL, function (data) {
@@ -97,13 +109,12 @@
     var fragment = document.createDocumentFragment();
 
     similarApartmentsToRender.forEach(function (apartment) {
-      apartmentItem = apartment;
       var newPinElement = renderPin(apartment);
 
       setPinPosition(newPinElement, apartment);
 
-      newPinElement.addEventListener('click', newPinHandler);
-      newPinElement.addEventListener('keydown', newPinHandler);
+      newPinElement.addEventListener('click', getPinHandler(apartment));
+      newPinElement.addEventListener('keydown', getPinHandler(apartment));
 
       fragment.appendChild(newPinElement);
     });
