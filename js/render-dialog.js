@@ -3,7 +3,8 @@
 window.renderDialog = (function () {
 
   var dialogTemplate = document.querySelector('#dialog-template');
-  var dialogElement = dialogTemplate.content.querySelector('.dialog');
+  var templateContent = 'content' in dialogTemplate ? dialogTemplate.content : dialogTemplate;
+  var dialogElement = templateContent.querySelector('.dialog');
   var dialogClone = dialogElement.cloneNode(true);
   var dialogTitleElement = dialogClone.querySelector('.dialog__title');
   var dialogAvatarElement = dialogTitleElement.querySelector('img');
