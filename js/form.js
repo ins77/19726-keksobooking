@@ -12,7 +12,7 @@
   var NUMBER_OF_ROOMS = ['1', '2', '100'];
   var NUMBER_OF_GUESTS = ['0', '3', '3'];
   var TIME_IN_VALUES = ['12', '13', '14'];
-  var TIME_OUT_VALUES = Array.prototype.slice.call(TIME_IN_VALUES);
+  var TIME_OUT_VALUES = ['12', '13', '14'];
   var TYPE_OF_APARTAMENTS = ['flat', 'shack', 'palace'];
   var APARTMENTS_PRICES_MIN = [1000, 0, 10000];
 
