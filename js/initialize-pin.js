@@ -152,9 +152,9 @@
   tokyoFiltersForm.addEventListener('change', function () {
     clearTokyoMap();
 
-    var filteredPinsData = filterPins(similarApartments);
+    var filteredPins = filterPins(similarApartments);
 
-    renderPins(filteredPinsData);
+    renderPins(filteredPins);
   });
 
 })();
