@@ -1,6 +1,7 @@
 'use strict';
 
 window.utils = (function () {
+
   var KeyCodes = {
     ENTER: 13,
     ESC: 27
@@ -58,4 +59,5 @@ window.utils = (function () {
     isFunction: isFunction,
     replaceDOM: replaceDOM
   };
+
 }());

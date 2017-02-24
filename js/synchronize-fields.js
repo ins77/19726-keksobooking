@@ -17,4 +17,5 @@ window.synchronizeFields = (function () {
       syncValues(secondField, secondFieldValue);
     });
   };
+
 })();

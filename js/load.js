@@ -22,4 +22,5 @@ window.load = (function () {
     xhr.open('GET', url);
     xhr.send();
   };
+
 })();

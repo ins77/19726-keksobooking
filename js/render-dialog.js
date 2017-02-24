@@ -52,4 +52,5 @@ window.renderDialog = (function () {
 
     return dialogClone;
   };
+
 })();

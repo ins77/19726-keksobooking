@@ -1,6 +1,7 @@
 'use strict';
 
 window.renderPin = (function () {
+
   var pinTemplate = document.querySelector('#pin-template');
   var pinElement = pinTemplate.content.querySelector('.pin');
 
@@ -18,4 +19,5 @@ window.renderPin = (function () {
 
     return pinClone;
   };
+
 })();

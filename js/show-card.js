@@ -1,6 +1,7 @@
 'use strict';
 
 window.showCard = (function () {
+
   var utils = window.utils;
   var renderDialog = window.renderDialog;
 
@@ -88,4 +89,5 @@ window.showCard = (function () {
     closeBtnElement = currentElement.querySelector('.dialog__close');
     addListeners();
   };
+
 })();

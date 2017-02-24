@@ -4,6 +4,7 @@
  * Отрисовка пинов, диалога
  */
 (function () {
+
   var utils = window.utils;
   var showCard = window.showCard;
   var load = window.load;
