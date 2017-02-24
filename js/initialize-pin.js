@@ -4,10 +4,12 @@
  * Отрисовка пинов, диалога
  */
 (function () {
+
   var utils = window.utils;
   var showCard = window.showCard;
   var load = window.load;
   var renderPin = window.renderPin;
+  var filterPins = window.filterPins;
 
   var ClassNames = {
     PIN: 'pin',
@@ -20,7 +22,9 @@
 
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
+  var tokyoFiltersForm = document.querySelector('.tokyo__filters');
   var similarApartments = [];
+  var pinElements = [];
 
   /**
    * Выделяет / снимает выделение с пина (pinElement), в зависимости от значения flag
@@ -77,7 +81,7 @@
      * @param {Event} event
      */
     return function (event) {
-      if (!utils.isActivateEvent(event)) {
+      if (!utils.checkActivateEvent(event)) {
         return;
       }
 
@@ -103,22 +107,54 @@
     };
   }
 
-  load(DATA_URL, function (data) {
-    similarApartments = data;
-    var similarApartmentsToRender = similarApartments.slice(0, 3);
+  /**
+   * Удаляет с карты пины и диалог, если он есть
+   */
+  function clearTokyoMap() {
+    pinElements.forEach(function (pinElement) {
+      pinElement.parentElement.removeChild(pinElement);
+    });
+    pinElements = [];
+    showCard(null, null, false);
+  }
+
+  /**
+   * Добавляет в разметку пины в соответствии с данными из массива pinsData
+   *
+   * @param {Array} pinsData
+   */
+  function renderPins(pinsData) {
     var fragment = document.createDocumentFragment();
 
-    similarApartmentsToRender.forEach(function (apartment) {
-      var newPinElement = renderPin(apartment);
+    pinsData.forEach(function (pinData) {
+      var newPinElement = renderPin(pinData);
 
-      setPinPosition(newPinElement, apartment);
+      pinElements.push(newPinElement);
 
-      newPinElement.addEventListener('click', getPinHandler(apartment));
-      newPinElement.addEventListener('keydown', getPinHandler(apartment));
+      setPinPosition(newPinElement, pinData);
+
+      newPinElement.addEventListener('click', getPinHandler(pinData));
+      newPinElement.addEventListener('keydown', getPinHandler(pinData));
 
       fragment.appendChild(newPinElement);
     });
 
     pinMapElement.appendChild(fragment);
+  }
+
+  load(DATA_URL, function (data) {
+    similarApartments = data;
+    var pinsData = similarApartments.slice(0, 3);
+
+    renderPins(pinsData);
   });
+
+  tokyoFiltersForm.addEventListener('change', function () {
+    clearTokyoMap();
+
+    var filteredPins = filterPins(similarApartments);
+
+    renderPins(filteredPins);
+  });
+
 })();

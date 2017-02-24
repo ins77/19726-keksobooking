@@ -12,9 +12,10 @@ window.synchronizeFields = (function () {
    * @param {Function} syncValues
    */
   return function (firstField, secondField, firstFieldValues, secondFieldValues, syncValues) {
-    firstField.addEventListener('input', function () {
+    firstField.addEventListener('change', function () {
       var secondFieldValue = secondFieldValues[firstFieldValues.indexOf(firstField.value)];
       syncValues(secondField, secondFieldValue);
     });
   };
+
 })();

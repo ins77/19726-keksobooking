@@ -12,9 +12,9 @@
   var NUMBER_OF_ROOMS = ['1', '2', '100'];
   var NUMBER_OF_GUESTS = ['0', '3', '3'];
   var TIME_IN_VALUES = ['12', '13', '14'];
-  var TIME_OUT_VALUES = Array.prototype.slice.call(TIME_IN_VALUES);
+  var TIME_OUT_VALUES = ['12', '13', '14'];
   var TYPE_OF_APARTAMENTS = ['flat', 'shack', 'palace'];
-  var APARTMENTS_PRICE_MIN = [1000, 0, 10000];
+  var APARTMENTS_PRICES_MIN = [1000, 0, 10000];
 
   var formNoticeElement = document.querySelector('.notice__form');
   var inputTitleElement = formNoticeElement.querySelector('#title');
@@ -79,10 +79,10 @@
    * Обработчик ввода для inputTitleElement
    */
   function inputTitleInputHandler() {
-    inputTitleElement.setCustomValidity('');
-
-    if (inputTitleElement.value.length < TITLE_MIN_VALUE && inputTitleElement.validity.valid) {
+    if (inputTitleElement.value.length < TITLE_MIN_VALUE) {
       inputTitleElement.setCustomValidity(errors.GREATER_THAN);
+    } else {
+      inputTitleElement.setCustomValidity('');
     }
   }
 
@@ -114,6 +114,6 @@
   synchronizeFields(selectCapacityElement, selectRoomsElement, NUMBER_OF_GUESTS, NUMBER_OF_ROOMS, syncValues);
   synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, syncValues);
   synchronizeFields(selectTimeOutElement, selectTimeInElement, TIME_OUT_VALUES, TIME_IN_VALUES, syncValues);
-  synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, syncValueWithMin);
+  synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICES_MIN, syncValueWithMin);
 
 })();

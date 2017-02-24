@@ -1,6 +1,7 @@
 'use strict';
 
 window.utils = (function () {
+
   var KeyCodes = {
     ENTER: 13,
     ESC: 27
@@ -33,12 +34,12 @@ window.utils = (function () {
    * @param {KeyboardEvent} event
    * @return {boolean}
    */
-  function isActivateEvent(event) {
+  function checkActivateEvent(event) {
     return event.keyCode === window.utils.KeyCodes.ENTER || event.type === 'click';
   }
 
   /**
-   * Заменяет один элемент другим
+   * Заменяет currentElement на newElement
    *
    * @param {Element} currentElement
    * @param {Element} newElement
@@ -47,15 +48,22 @@ window.utils = (function () {
     currentElement.parentElement.replaceChild(newElement, currentElement);
   }
 
-  function isFunction(arg) {
+  /**
+   * Проверяет функция ли arg
+   *
+   * @param {*} arg
+   * @return {boolean}
+   */
+  function checkFunction(arg) {
     return typeof arg === 'function';
   }
 
   return {
     KeyCodes: KeyCodes,
     getClosestElement: getClosestElement,
-    isActivateEvent: isActivateEvent,
-    isFunction: isFunction,
+    checkActivateEvent: checkActivateEvent,
+    checkFunction: checkFunction,
     replaceDOM: replaceDOM
   };
+
 }());

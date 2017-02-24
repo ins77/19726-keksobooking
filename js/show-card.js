@@ -1,6 +1,7 @@
 'use strict';
 
 window.showCard = (function () {
+
   var utils = window.utils;
   var renderDialog = window.renderDialog;
 
@@ -59,15 +60,23 @@ window.showCard = (function () {
   }
 
   /**
-   * Показывает диалог
+   * Показывает / скрывает диалог
    *
    * @param {Array} data
    * @param {Function} callback
+   * @param {boolean} flag
    */
-  return function (data, callback) {
+  return function (data, callback, flag) {
+    if (flag === false) {
+      if (currentElement) {
+        closeDialog();
+      }
+      return;
+    }
+
     var newDialogElement = renderDialog(data);
 
-    cb = utils.isFunction(callback) ? callback : null;
+    cb = utils.checkFunction(callback) ? callback : null;
 
     if (currentElement) {
       removeListeners();
@@ -80,4 +89,5 @@ window.showCard = (function () {
     closeBtnElement = currentElement.querySelector('.dialog__close');
     addListeners();
   };
+
 })();
