@@ -79,10 +79,10 @@
    * Обработчик ввода для inputTitleElement
    */
   function inputTitleInputHandler() {
-    inputTitleElement.setCustomValidity('');
-
-    if (inputTitleElement.value.length < TITLE_MIN_VALUE && inputTitleElement.validity.valid) {
+    if (inputTitleElement.value.length < TITLE_MIN_VALUE) {
       inputTitleElement.setCustomValidity(errors.GREATER_THAN);
+    } else {
+      inputTitleElement.setCustomValidity('');
     }
   }
 
