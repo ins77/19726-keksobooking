@@ -203,7 +203,7 @@
       return features.indexOf(apartmentFeature) >= 0;
     });
 
-    return compareCheckedAndFeatures.length === 0 || compareCheckedAndFeatures;
+    return compareCheckedAndFeatures;
   }
 
   /**
