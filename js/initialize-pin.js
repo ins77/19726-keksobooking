@@ -19,7 +19,7 @@
     MIDDLE: 50000
   };
 
-  var FilterPriceValue = {
+  var FilterPriceNames = {
     LOW: 'low',
     MIDDLE: 'middle',
     HIGHT: 'hight'
@@ -153,11 +153,11 @@
    */
   function checkApartmentPrice(price) {
     switch (tokyoFilterPriceElement.value) {
-      case (FilterPriceValue.LOW):
+      case (FilterPriceNames.LOW):
         return price < FilterPrice.LOW;
-      case (FilterPriceValue.MIDDLE):
+      case (FilterPriceNames.MIDDLE):
         return price >= FilterPrice.LOW && price <= FilterPrice.MIDDLE;
-      case (FilterPriceValue.HIGHT):
+      case (FilterPriceNames.HIGHT):
         return price > FilterPrice.MIDDLE;
       default:
         return false;
@@ -199,15 +199,11 @@
       return featureElement.value;
     });
 
-    var mismatchFeatures = featureCheckedElements.filter(function (featureElement) {
-      return features.indexOf(featureElement) < 0;
+    var compareCheckedAndFeatures = featureCheckedElements.every(function (apartmentFeature) {
+      return features.indexOf(apartmentFeature) >= 0;
     });
 
-    var isFeaturesMatch = features.some(function (apartmentFeature) {
-      return mismatchFeatures.indexOf(apartmentFeature) >= 0;
-    });
-
-    return mismatchFeatures.length === 0 || isFeaturesMatch;
+    return compareCheckedAndFeatures.length === 0 || compareCheckedAndFeatures;
   }
 
   /**

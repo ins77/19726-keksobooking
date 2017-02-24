@@ -59,7 +59,7 @@ window.showCard = (function () {
   }
 
   /**
-   * Показывает диалог
+   * Показывает / скрывает диалог
    *
    * @param {boolean} isDialogVisible
    * @param {Array} data
