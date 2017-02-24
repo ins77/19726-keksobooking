@@ -62,12 +62,12 @@ window.showCard = (function () {
   /**
    * Показывает / скрывает диалог
    *
-   * @param {boolean} isDialogVisible
    * @param {Array} data
    * @param {Function} callback
+   * @param {boolean} flag
    */
-  return function (isDialogVisible, data, callback) {
-    if (!isDialogVisible) {
+  return function (data, callback, flag) {
+    if (flag === false) {
       if (currentElement) {
         closeDialog();
       }

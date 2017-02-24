@@ -9,37 +9,20 @@
   var showCard = window.showCard;
   var load = window.load;
   var renderPin = window.renderPin;
+  var filterPins = window.filterPins;
 
   var ClassNames = {
     PIN: 'pin',
     PIN_ACTIVE: 'pin--active',
   };
 
-  var FilterPrice = {
-    LOW: 10000,
-    MIDDLE: 50000
-  };
-
-  var FilterPriceNames = {
-    LOW: 'low',
-    MIDDLE: 'middle',
-    HIGHT: 'hight'
-  };
-
   var PIN_WIDTH = 56;
   var PIN_HEIGHT = 75;
   var DATA_URL = 'https://intensive-javascript-server-pedmyactpq.now.sh/keksobooking/data';
-  var FILTER_ANY = 'any';
 
   var pinMapElement = document.querySelector('.tokyo__pin-map');
   var selectedPinElement = pinMapElement.querySelector('.pin--active');
-  var tokyoElement = document.querySelector('.tokyo');
-  var tokyoFiltersForm = tokyoElement.querySelector('.tokyo__filters');
-  var tokyoFilterTypeElement = tokyoFiltersForm.querySelector('#housing_type');
-  var tokyoFilterPriceElement = tokyoFiltersForm.querySelector('#housing_price');
-  var tokyoFilterRoomsElement = tokyoFiltersForm.querySelector('#housing_room-number');
-  var tokyoFilterGuestsElement = tokyoFiltersForm.querySelector('#housing_guests-number');
-  var tokyoFilterFeatureElements = tokyoFiltersForm.querySelectorAll('input[type="checkbox"]');
+  var tokyoFiltersForm = document.querySelector('.tokyo__filters');
   var similarApartments = [];
   var pinElements = [];
 
@@ -120,7 +103,7 @@
       }
 
       setActivePin(closestPinElement);
-      showCard(true, pinData, cb);
+      showCard(pinData, cb);
     };
   }
 
@@ -132,79 +115,7 @@
       pinElement.parentElement.removeChild(pinElement);
     });
     pinElements.length = 0;
-    showCard(false, null, null);
-  }
-
-  /**
-   * Сверяет тип апартаментов между значением фильтра и значением type
-   *
-   * @param {string} type
-   * @return {boolean}
-   */
-  function checkApartmentType(type) {
-    var typeElementValue = tokyoFilterTypeElement.value;
-    return typeElementValue === FILTER_ANY || typeElementValue === type;
-  }
-
-  /**
-   * Сверяет цену апартаментов между значением фильтра и значением price
-   *
-   * @param {string} price
-   * @return {boolean}
-   */
-  function checkApartmentPrice(price) {
-    switch (tokyoFilterPriceElement.value) {
-      case (FilterPriceNames.LOW):
-        return price < FilterPrice.LOW;
-      case (FilterPriceNames.MIDDLE):
-        return price >= FilterPrice.LOW && price <= FilterPrice.MIDDLE;
-      case (FilterPriceNames.HIGHT):
-        return price > FilterPrice.MIDDLE;
-      default:
-        return false;
-    }
-  }
-
-  /**
-   * Сверяет количество комнат в апартаментах между значением фильтра и значением rooms
-   *
-   * @param {number} rooms
-   * @return {boolean}
-   */
-  function checkApartmentRooms(rooms) {
-    var roomsElementValue = tokyoFilterRoomsElement.value;
-    return roomsElementValue === FILTER_ANY || roomsElementValue === rooms.toString();
-  }
-
-  /**
-   * Сверяет количество гостей в апартаментах между значением фильтра и значением guests
-   *
-   * @param {number} guests
-   * @return {boolean}
-   */
-  function checkApartmentGuests(guests) {
-    var guestsElementValue = tokyoFilterGuestsElement.value;
-    return guestsElementValue === FILTER_ANY || guestsElementValue === guests.toString();
-  }
-
-  /**
-   * Сверяет выбранные в фильтре дополнительные с массивом features
-   *
-   * @param {Array} features
-   * @return {boolean}
-   */
-  function checkApartmentFeatures(features) {
-    var featureCheckedElements = Array.prototype.filter.call(tokyoFilterFeatureElements, function (featureElement) {
-      return featureElement.checked;
-    }).map(function (featureElement) {
-      return featureElement.value;
-    });
-
-    var compareCheckedAndFeatures = featureCheckedElements.every(function (apartmentFeature) {
-      return features.indexOf(apartmentFeature) >= 0;
-    });
-
-    return compareCheckedAndFeatures;
+    showCard(null, null, false);
   }
 
   /**
@@ -241,15 +152,9 @@
   tokyoFiltersForm.addEventListener('change', function () {
     clearTokyoMap();
 
-    var pinsData = similarApartments.filter(function (apartment) {
-      return checkApartmentType(apartment.offer.type) &&
-             checkApartmentPrice(apartment.offer.price) &&
-             checkApartmentRooms(apartment.offer.rooms) &&
-             checkApartmentGuests(apartment.offer.guests) &&
-             checkApartmentFeatures(apartment.offer.features);
-    });
+    var filteredPinsData = filterPins(similarApartments);
 
-    renderPins(pinsData);
+    renderPins(filteredPinsData);
   });
 
 })();
