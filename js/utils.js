@@ -34,7 +34,7 @@ window.utils = (function () {
    * @param {KeyboardEvent} event
    * @return {boolean}
    */
-  function isActivateEvent(event) {
+  function checkActivateEvent(event) {
     return event.keyCode === window.utils.KeyCodes.ENTER || event.type === 'click';
   }
 
@@ -54,15 +54,15 @@ window.utils = (function () {
    * @param {*} arg
    * @return {boolean}
    */
-  function isFunction(arg) {
+  function checkFunction(arg) {
     return typeof arg === 'function';
   }
 
   return {
     KeyCodes: KeyCodes,
     getClosestElement: getClosestElement,
-    isActivateEvent: isActivateEvent,
-    isFunction: isFunction,
+    checkActivateEvent: checkActivateEvent,
+    checkFunction: checkFunction,
     replaceDOM: replaceDOM
   };
 

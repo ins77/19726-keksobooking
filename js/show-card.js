@@ -76,7 +76,7 @@ window.showCard = (function () {
 
     var newDialogElement = renderDialog(data);
 
-    cb = utils.isFunction(callback) ? callback : null;
+    cb = utils.checkFunction(callback) ? callback : null;
 
     if (currentElement) {
       removeListeners();

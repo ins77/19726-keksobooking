@@ -14,7 +14,7 @@
   var TIME_IN_VALUES = ['12', '13', '14'];
   var TIME_OUT_VALUES = Array.prototype.slice.call(TIME_IN_VALUES);
   var TYPE_OF_APARTAMENTS = ['flat', 'shack', 'palace'];
-  var APARTMENTS_PRICE_MIN = [1000, 0, 10000];
+  var APARTMENTS_PRICES_MIN = [1000, 0, 10000];
 
   var formNoticeElement = document.querySelector('.notice__form');
   var inputTitleElement = formNoticeElement.querySelector('#title');
@@ -114,6 +114,6 @@
   synchronizeFields(selectCapacityElement, selectRoomsElement, NUMBER_OF_GUESTS, NUMBER_OF_ROOMS, syncValues);
   synchronizeFields(selectTimeInElement, selectTimeOutElement, TIME_IN_VALUES, TIME_OUT_VALUES, syncValues);
   synchronizeFields(selectTimeOutElement, selectTimeInElement, TIME_OUT_VALUES, TIME_IN_VALUES, syncValues);
-  synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICE_MIN, syncValueWithMin);
+  synchronizeFields(selectTypeElement, inputPriceElement, TYPE_OF_APARTAMENTS, APARTMENTS_PRICES_MIN, syncValueWithMin);
 
 })();

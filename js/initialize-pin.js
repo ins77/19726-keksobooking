@@ -98,7 +98,7 @@
      * @param {Event} event
      */
     return function (event) {
-      if (!utils.isActivateEvent(event)) {
+      if (!utils.checkActivateEvent(event)) {
         return;
       }
 
@@ -177,7 +177,7 @@
   }
 
   /**
-   * Сверяет количество комнат в апартаментах между значением фильтра и значением guests
+   * Сверяет количество гостей в апартаментах между значением фильтра и значением guests
    *
    * @param {number} guests
    * @return {boolean}
@@ -188,7 +188,7 @@
   }
 
   /**
-   * Сверяет выбранные в фильтре особенности апартаментов с массивом features
+   * Сверяет выбранные в фильтре дополнительные с массивом features
    *
    * @param {Array} features
    * @return {boolean}
@@ -208,7 +208,7 @@
   }
 
   /**
-   * Добавляет в разметку пины из массива pinsToRender
+   * Добавляет в разметку пины в соответствии с данными из массива pinsData
    *
    * @param {Array} pinsData
    */
