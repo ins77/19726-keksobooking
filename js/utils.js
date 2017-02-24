@@ -39,7 +39,7 @@ window.utils = (function () {
   }
 
   /**
-   * Заменяет один элемент другим
+   * Заменяет currentElement на newElement
    *
    * @param {Element} currentElement
    * @param {Element} newElement
@@ -48,6 +48,12 @@ window.utils = (function () {
     currentElement.parentElement.replaceChild(newElement, currentElement);
   }
 
+  /**
+   * Проверяет функция ли arg
+   *
+   * @param {*} arg
+   * @return {boolean}
+   */
   function isFunction(arg) {
     return typeof arg === 'function';
   }
