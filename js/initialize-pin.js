@@ -114,7 +114,7 @@
     pinElements.forEach(function (pinElement) {
       pinElement.parentElement.removeChild(pinElement);
     });
-    pinElements.length = 0;
+    pinElements = [];
     showCard(null, null, false);
   }
 
