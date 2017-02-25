@@ -34,7 +34,7 @@
    */
   function selectPin(pinElement, flag) {
     pinElement.classList.toggle(ClassNames.PIN_ACTIVE, flag);
-    pinElement.querySelector('[role="button"]').setAttribute('aria-pressed', flag);
+    pinElement.setAttribute('aria-pressed', flag);
   }
 
   /**
@@ -97,7 +97,7 @@
         cb = removeSelectedPin;
       } else {
         cb = function () {
-          selectedPinElement.querySelector('[role="button"]').focus();
+          selectedPinElement.focus();
           removeSelectedPin();
         };
       }
