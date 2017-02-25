@@ -82,6 +82,10 @@ select option:hover {
     background-color: #ff6547;
 }
 
+template {
+    display: none;
+}
+
 .feature {
     box-sizing: border-box;
     width: 70px;
